@@ -316,6 +316,7 @@ else()
             -fsanitize=bounds-strict
             -fno-sanitize-recover=undefined
             -fno-omit-frame-pointer
+            -fno-sanitize=function
         )
     endif()
 endif()
