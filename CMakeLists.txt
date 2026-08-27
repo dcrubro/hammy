@@ -388,6 +388,43 @@ else()
     # which is before Concord has been built.
     file(MAKE_DIRECTORY "${CONCORD_INCLUDE_DIR}")
 
+    # Upstream's `make install` is three shell globs relative to the working
+    # directory, fed to install(1). When one matches nothing the shell passes it
+    # through literally and install reports `cannot stat 'include/*.h'`, which
+    # says nothing about which glob mattered or why. Do the copy ourselves with
+    # absolute paths and name the two failure modes that actually occur.
+    #
+    # The globs run at install time rather than configure time because
+    # gencodecs/discord_codecs.h does not exist until the build has generated it.
+    set(CONCORD_INSTALL_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/concord_install.cmake")
+    file(CONFIGURE
+        OUTPUT "${CONCORD_INSTALL_SCRIPT}"
+        @ONLY
+        CONTENT [[
+file(MAKE_DIRECTORY "@CONCORD_INCLUDE_DIR@/concord" "@CONCORD_PREFIX@/lib")
+
+# Upstream flattens all three header directories into one include/concord. Check
+# them one at a time: a single empty directory is the interesting failure, and a
+# combined glob would hide it behind whichever siblings still matched.
+set(_hdrs "")
+foreach(_dir include core gencodecs)
+    file(GLOB _found "@concord_SOURCE_DIR@/${_dir}/*.h")
+    if(NOT _found)
+        message(FATAL_ERROR
+            "Concord: no headers in @concord_SOURCE_DIR@/${_dir} -- the source "
+            "tree is incomplete; remove build/_deps and reconfigure to re-clone")
+    endif()
+    list(APPEND _hdrs ${_found})
+endforeach()
+file(COPY ${_hdrs} DESTINATION "@CONCORD_INCLUDE_DIR@/concord")
+
+file(GLOB _libs "@concord_SOURCE_DIR@/lib/libdiscord.*")
+if(NOT _libs)
+    message(FATAL_ERROR "Concord: build produced no library in @concord_SOURCE_DIR@/lib")
+endif()
+file(COPY ${_libs} DESTINATION "@CONCORD_PREFIX@/lib")
+]])
+
     # Concord gets our instrumentation but not our warning set: ASan only sees a
     # bug if the translation unit that owns the memory was compiled with it, and
     # Concord allocates plenty that our code then touches. CFLAGS goes through
@@ -396,28 +433,41 @@ else()
     # override those and break the build.
     set(CONCORD_CFLAGS "-O2 -g $<JOIN:${HAMMY_INSTRUMENT_COMPILE}, >")
 
+    # gencodecs/Makefile hardcodes CC/HOSTCC/CPP to "cc" for its host-side code
+    # generator, with plain '=' assignments that the environment cannot override.
+    # On a system where cc is GCC and we build with Clang, the generator is then
+    # handed our Clang-only flags (-fno-sanitize=function) and dies. Command-line
+    # assignments do beat makefile assignments, so force the compiler there --
+    # while leaving CFLAGS in the environment, per the note above.
+    #
+    # gencodecs-pp is a build-time text filter, run as `cpp ... | ./gencodecs-pp`.
+    # ASan's exit-time leak check would turn a leak in that throwaway tool into a
+    # build failure reported as a broken pipeline, so switch it off for the
+    # duration of Concord's build only; our own binary is unaffected.
     ExternalProject_Add(concord_external
         SOURCE_DIR "${concord_SOURCE_DIR}"
         DOWNLOAD_COMMAND ""     # FetchContent already cloned it
         UPDATE_COMMAND ""
         CONFIGURE_COMMAND ""
         BUILD_IN_SOURCE TRUE    # upstream's Makefile has no out-of-tree mode
-        BUILD_COMMAND ${CMAKE_COMMAND} -E env "CC=${CMAKE_C_COMPILER}" "CFLAGS=${CONCORD_CFLAGS}"
+        # Upstream tracks nothing we can express as a byproduct, so the stamp
+        # would happily report "built" after a `make clean` emptied lib/.
+        BUILD_ALWAYS TRUE
+        BUILD_COMMAND ${CMAKE_COMMAND} -E env
+                      "CC=${CMAKE_C_COMPILER}"
+                      "CFLAGS=${CONCORD_CFLAGS}"
+                      "ASAN_OPTIONS=detect_leaks=0"
                       ${HAMMY_MAKE_EXECUTABLE}
-        INSTALL_COMMAND ${HAMMY_MAKE_EXECUTABLE} install "PREFIX=${CONCORD_PREFIX}"
+                      "CC=${CMAKE_C_COMPILER}"
+                      "HOSTCC=${CMAKE_C_COMPILER}"
+                      "CPP=${CMAKE_C_COMPILER} -E"
+        INSTALL_COMMAND ${CMAKE_COMMAND} -P "${CONCORD_INSTALL_SCRIPT}"
         BUILD_BYPRODUCTS "${CONCORD_LIBRARY}"
-        USES_TERMINAL_BUILD TRUE
+        # USES_TERMINAL_BUILD would silently disable LOG_BUILD; with
+        # LOG_OUTPUT_ON_FAILURE we get the full log exactly when it matters.
         LOG_BUILD TRUE
         LOG_INSTALL TRUE
         LOG_OUTPUT_ON_FAILURE TRUE
-    )
-
-    ExternalProject_Add_Step(concord_external mirror_headers
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-                "${CONCORD_INCLUDE_DIR}/concord"
-                "${PROJECT_SOURCE_DIR}/include/concord"
-        DEPENDEES install
-        COMMENT "Mirroring Concord headers into include/concord"
     )
 
     add_library(concord::concord STATIC IMPORTED GLOBAL)
@@ -455,6 +505,14 @@ add_executable(hammy ${HAMMY_SRC})
 target_include_directories(hammy PRIVATE
     ${PROJECT_SOURCE_DIR}/include
 )
+
+target_include_directories(hammy SYSTEM PRIVATE
+    ${PROJECT_SOURCE_DIR}/third_party
+)
+
+# Concord's headers arrive through concord::concord. CMake passes an imported
+# target's interface includes as -isystem, so upstream's headers never trip our
+# warning set and no second copy under third_party/ is needed.
 
 target_link_libraries(hammy PRIVATE concord::concord)
 if(HAMMY_CONCORD_EXTERNAL)
