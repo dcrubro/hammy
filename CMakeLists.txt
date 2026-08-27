@@ -411,6 +411,14 @@ else()
         LOG_OUTPUT_ON_FAILURE TRUE
     )
 
+    ExternalProject_Add_Step(concord_external mirror_headers
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${CONCORD_INCLUDE_DIR}/concord"
+                "${PROJECT_SOURCE_DIR}/include/concord"
+        DEPENDEES install
+        COMMENT "Mirroring Concord headers into include/concord"
+    )
+
     add_library(concord::concord STATIC IMPORTED GLOBAL)
     set_target_properties(concord::concord PROPERTIES
         IMPORTED_LOCATION "${CONCORD_LIBRARY}"
