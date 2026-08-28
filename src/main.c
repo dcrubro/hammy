@@ -11,7 +11,7 @@ static void on_signal(int sig) {
 
 void on_ready(struct discord* client, const struct discord_ready* event) {
     (void)client;
-    log_info("Logged in as %s", event->user->username);
+    log_info("[master] Logged in as %s", event->user->username);
 }
 
 int main(void) {
@@ -27,7 +27,7 @@ int main(void) {
 
     hammy_bot_t* bot = hammy_bot_create();
     if (!bot) {
-        log_error("Hammy Bot creation returned NULL! Bailing!");
+        log_error("[master] Hammy Bot creation returned NULL! Bailing!");
         ccord_global_cleanup();
 
         return 1;
