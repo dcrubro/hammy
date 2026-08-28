@@ -17,12 +17,6 @@ hammy_bot_t* hammy_bot_create() {
         return NULL;
     }
 
-    if (vector_set_destructor(bot->commands, &hammy_command_destroy) < 0) {
-        vector_destroy(&bot->commands);
-        free(bot);
-        return NULL;
-    }
-
     // Init the discord client - even though this is an owning reference, the main() and others may call functions on it (if we don't stay singlethread anymore then FIX THIS)
     bot->client = discord_from_json("config.json");
     if (!bot->client) {

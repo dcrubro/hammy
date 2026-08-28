@@ -2,6 +2,7 @@
 #define HAMMY_COMMAND_H
 
 #include <concord/discord.h>
+#include <concord/log.h>
 #include <stdbool.h>
 
 #include <hammy/types.h>
