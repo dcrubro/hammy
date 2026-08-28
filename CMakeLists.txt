@@ -337,7 +337,14 @@ if(HAMMY_ENABLE_LTO)
 endif()
 
 # ---------------------------------------------------------
-# Concord (Discord API wrapper), fetched from the dev branch
+# Concord (Discord API wrapper), pinned to the v3.0.1 release
+#
+# Pinned rather than tracking dev: dev reverted the notifier's portable fcntl
+# setup back to ioctl(FIONBIO), cast to int. macOS FIONBIO is 0x8004667E, so the
+# cast goes negative, sign-extends into ioctl's unsigned long parameter and the
+# call fails -- ccord_global_init() then dies before the client is ever built.
+# The release tags still carry the fcntl version. Check that the regression is
+# gone before moving this back to a branch.
 #
 # Concord ships a hand-written Makefile, not a CMake build, so this is a
 # two-stage arrangement: FetchContent clones it at configure time (recursively,
@@ -358,7 +365,7 @@ include(ExternalProject)
 FetchContent_Declare(
     concord
     GIT_REPOSITORY https://github.com/Cogmasters/concord.git
-    GIT_TAG dev
+    GIT_TAG v3.0.1
     GIT_SHALLOW TRUE
     GIT_PROGRESS TRUE
 )
@@ -395,7 +402,11 @@ else()
     # absolute paths and name the two failure modes that actually occur.
     #
     # The globs run at install time rather than configure time because
-    # gencodecs/discord_codecs.h does not exist until the build has generated it.
+    # generated/discord_codecs.h does not exist until the build has emitted it.
+    #
+    # Keep the directory list below in step with the `install:` target in
+    # upstream's Makefile; v3.0.1 renamed gencodecs/ to generated/ and split
+    # reflect-c.h out into its own directory.
     set(CONCORD_INSTALL_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/concord_install.cmake")
     file(CONFIGURE
         OUTPUT "${CONCORD_INSTALL_SCRIPT}"
@@ -407,7 +418,7 @@ file(MAKE_DIRECTORY "@CONCORD_INCLUDE_DIR@/concord" "@CONCORD_PREFIX@/lib")
 # them one at a time: a single empty directory is the interesting failure, and a
 # combined glob would hide it behind whichever siblings still matched.
 set(_hdrs "")
-foreach(_dir include core gencodecs)
+foreach(_dir include core generated)
     file(GLOB _found "@concord_SOURCE_DIR@/${_dir}/*.h")
     if(NOT _found)
         message(FATAL_ERROR
@@ -416,7 +427,52 @@ foreach(_dir include core gencodecs)
     endif()
     list(APPEND _hdrs ${_found})
 endforeach()
+
+# Not part of any of the three directories, but generated/discord_codecs.h
+# includes it, so discord.h does not parse without it.
+if(NOT EXISTS "@concord_SOURCE_DIR@/reflect-c/reflect-c.h")
+    message(FATAL_ERROR
+        "Concord: missing @concord_SOURCE_DIR@/reflect-c/reflect-c.h -- the "
+        "reflect-c submodule was not cloned; remove build/_deps and reconfigure")
+endif()
+list(APPEND _hdrs "@concord_SOURCE_DIR@/reflect-c/reflect-c.h")
+
 file(COPY ${_hdrs} DESTINATION "@CONCORD_INCLUDE_DIR@/concord")
+
+# third_party/concord is a checked-in mirror of the headers just installed. It
+# exists so an editor has something to resolve <concord/*.h> against in a fresh
+# clone, before anything has been built -- build/ is gitignored, so the copy
+# above is not there yet.
+#
+# It is refreshed from the same file list on every build rather than left to be
+# updated by hand, because it also sits FIRST on hammy's include path
+# (-isystem third_party precedes the installed headers). A stale mirror would
+# not merely confuse the editor, it would be what the compiler actually reads --
+# hammy would build against one version of Concord and link another. Keeping the
+# two byte-identical makes the ordering irrelevant. Moving GIT_TAG therefore
+# shows up as a diff under third_party/concord; commit it along with the bump.
+#
+# Prune first: a version bump can retire a header, and one left behind in the
+# mirror would still be found by the compiler. Only files that vanished upstream
+# are removed -- file(COPY) preserves timestamps and skips files already
+# matching, so mirroring costs one stat per header on a build that changed
+# nothing. The exception is discord_codecs.h, which Concord's own build
+# regenerates every time (BUILD_ALWAYS re-runs make); its mtime moves, so it is
+# recopied. That does not add a rebuild -- the regenerated original already
+# forces one -- and its contents are deterministic, so git stays clean.
+set(_want "")
+foreach(_hdr IN LISTS _hdrs)
+    get_filename_component(_name "${_hdr}" NAME)
+    list(APPEND _want "${_name}")
+endforeach()
+file(GLOB _mirrored "@CMAKE_CURRENT_SOURCE_DIR@/third_party/concord/*.h")
+foreach(_old IN LISTS _mirrored)
+    get_filename_component(_name "${_old}" NAME)
+    if(NOT "${_name}" IN_LIST _want)
+        file(REMOVE "${_old}")
+    endif()
+endforeach()
+file(COPY ${_hdrs} DESTINATION "@CMAKE_CURRENT_SOURCE_DIR@/third_party/concord")
 
 file(GLOB _libs "@concord_SOURCE_DIR@/lib/libdiscord.*")
 if(NOT _libs)
@@ -559,7 +615,7 @@ message(STATUS "hammy: sanitizers      [Debug/Strict] ${HAMMY_SANITIZER_FLAGS}")
 message(STATUS "hammy: static analyzer [Analyzer]     ${HAMMY_ANALYZER_FLAGS}")
 message(STATUS "hammy: hardening       ${HAMMY_ENABLE_HARDENING}")
 message(STATUS "hammy: LTO             ${HAMMY_ENABLE_LTO}")
-message(STATUS "hammy: concord         ${concord_SOURCE_DIR} (branch dev)")
+message(STATUS "hammy: concord         ${concord_SOURCE_DIR} (v3.0.1)")
 if(CMAKE_BUILD_TYPE STREQUAL "Analyzer" AND NOT HAMMY_ANALYZER_FLAGS)
     message(STATUS "hammy: NOTE - Analyzer config has no static analyzer on "
                    "${CMAKE_C_COMPILER_ID}; use scan-build over this build tree")
