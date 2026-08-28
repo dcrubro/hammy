@@ -5,13 +5,14 @@
 #include <dlibc/vector.h>
 #include <stdlib.h>
 
+#include <hammy/types.h>
 #include <hammy/command.h>
 
-typedef struct {
+struct hammy_bot_t {
     struct discord* client; // Owning reference to the client - handoff from main.c
     bool commands_registered; // A flag if commands have been registered. Avoid re-registering every reconnect.
     vector_t* commands; // vector_t of commands. Owning.
-} hammy_bot_t;
+};
 
 // Alloc on heap and create
 hammy_bot_t* hammy_bot_create();

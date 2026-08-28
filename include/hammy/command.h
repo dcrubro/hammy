@@ -2,11 +2,12 @@
 #define HAMMY_COMMAND_H
 
 #include <stdlib.h>
+#include <hammy/types.h>
 
-typedef struct {
+struct hammy_command_t {
     // TODO: add shit here
     char empty;
-} hammy_command_t;
+};
 
 // Creates the command on the heap, returns NULL if failed.
 hammy_command_t* hammy_command_create();
