@@ -1,8 +1,17 @@
 # Hammy
-
 A Discord Bot for Ham/Amateur Radio
 
 Fun fact: The logo of Hammy is a function! It is: f(x) = e^(-x^2)sin(9x)
+
+## Features
+Currently in-development, many features planned!
+
+## Architecture
+Hammy is written in C, using the [Concord Library](https://github.com/Cogmasters/concord). It's multithreaded, with a thread pool system for queuing jobs.
+
+User interactions can be of two types:
+- Instant Interactions: Handled directly by the master thread, don't require any communication with the backend, performed on-bot.
+- Non-Instant Interactions: Queued into the job pool, where a worker thread picks them up (handoff) for processing in the background and responds later.
 
 ## AI Disclosure
 AI tools were used responsibly in the creation of this project, mainly for cmakelists off a pre-made template. It has also been used for minor things like functions, reviews, commits, etc.
