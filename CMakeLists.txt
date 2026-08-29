@@ -198,7 +198,7 @@ else()
         -Wshadow
         -Wconversion
         -Wsign-conversion
-        -Wcast-qual
+        #-Wcast-qual
         -Wcast-align
         -Wstrict-prototypes
         -Wmissing-prototypes
@@ -215,6 +215,7 @@ else()
         -Wundef
         -Winit-self
         -Wmissing-include-dirs
+        -Wno-discarded-qualifiers # Temp
     )
 
     if(CMAKE_C_COMPILER_ID MATCHES "GNU")

@@ -134,7 +134,7 @@ static void hammy_pool_stop(hammy_pool_t* pool, bool drain) {
         // The job's bot back-reference carries the original client, which is
         // the one this thread is allowed to serialise through.
         if (job->bot && job->bot->client) {
-            hammy_job_reply(job, job->bot->client, "Hammy is shutting down, so this command was dropped. Please try again once it is back.");
+            hammy_job_reply(job, job->bot->client, "Bot is Shutting Down", "Hammy is shutting down, so this command was dropped. Please try again once it is back.", true);
         }
 
         hammy_job_destroy(&job);

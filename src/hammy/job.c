@@ -7,6 +7,7 @@
 #include <hammy/bot.h>
 #include <hammy/command.h>
 #include <hammy/job.h>
+#include <hammy/embeds.h>
 
 // strdup() is POSIX, so we'll keep a local and keep the code portable.
 static char* hammy_strdup(const char* src) {
@@ -125,34 +126,67 @@ int64_t hammy_job_age_ms(const hammy_job_t* job, struct discord* client) {
     return (int64_t)discord_timestamp(client) - job->queuedAt;
 }
 
-void hammy_job_reply(const hammy_job_t* job, struct discord* client, const char* content) {
-    if (!job || !client || !content) { return; }
+void hammy_job_reply(const hammy_job_t* job, struct discord* client, const char* title, const char* content, bool isError) {
+    if (!job || !client || !content || !title) { return; }
 
-    // TODO: Embeds
-    struct discord_edit_original_interaction_response params = {
-        .content = (char*)content
-    };
+    if (hammy_embeds_customembed(client, NULL, NULL, title, content, NULL, 0, isError ? 0xFF0000 : 0x00FF00)) {
+        struct discord_interaction_response params = {
+            .type = DISCORD_INTERACTION_CHANNEL_MESSAGE_WITH_SOURCE,
+            .data = &(struct discord_interaction_callback_data){
+                .content = (char*)content
+            }
+        };
 
-    CCORDcode code = discord_edit_original_interaction_response(client, job->appId, job->token, &params, NULL);
-    if (code != CCORD_OK) {
-        log_warn("[job] Failed to edit response for interaction %" PRIu64 ": %d", job->id, code);
+        CCORDcode code = discord_create_interaction_response(client, job->id, job->token, &params, NULL);
+        if (code != CCORD_OK) {
+            log_warn("[job] Failed to send interaction response for interaction %" PRIu64 ": %d", job->id, code);
+        }
+    } else {
+        struct discord_interaction_response params = {
+            .type = DISCORD_INTERACTION_CHANNEL_MESSAGE_WITH_SOURCE,
+            .data = &(struct discord_interaction_callback_data){
+                .content = (char*)content
+            }
+        };
+
+        CCORDcode code = discord_create_interaction_response(client, job->id, job->token, &params, NULL);
+        if (code != CCORD_OK) {
+            log_warn("[job] Failed to send interaction response for interaction %" PRIu64 ": %d", job->id, code);
+        }
     }
 }
 
-void hammy_job_respond(const hammy_job_t* job, struct discord* client, const char* content) {
-    if (!job || !client || !content) { return; }
+void hammy_job_respond(const hammy_job_t* job, struct discord* client, const char* title, const char* content, bool isError) {
+    if (!job || !client || !content || !title) { return; }
 
-    struct discord_interaction_response params = {
-        .type = DISCORD_INTERACTION_CHANNEL_MESSAGE_WITH_SOURCE,
-        .data = &(struct discord_interaction_callback_data){
-            .content = (char*)content
+    struct discord_embed embed[1];
+    if (hammy_embeds_customembed(client, embed, NULL, title, content, NULL, 0, isError ? 0xFF0000 : 0x00FF00)) {
+        struct discord_interaction_response params = {
+            .type = DISCORD_INTERACTION_CHANNEL_MESSAGE_WITH_SOURCE,
+            .data = &(struct discord_interaction_callback_data){
+                .embeds = &(struct discord_embeds){
+                    .size = 1,
+                    .array = embed
+                }
+            }
+        };
+
+        CCORDcode code = discord_create_interaction_response(client, job->id, job->token, &params, NULL);
+        if (code != CCORD_OK) {
+            log_warn("[job] Failed to send interaction response for interaction %" PRIu64 ": %d", job->id, code);
         }
-    };
+    } else {
+        struct discord_interaction_response params = {
+            .type = DISCORD_INTERACTION_CHANNEL_MESSAGE_WITH_SOURCE,
+            .data = &(struct discord_interaction_callback_data){
+                .content = (char*)content
+            }
+        };
 
-    CCORDcode code = discord_create_interaction_response(client, job->id, job->token, &params, NULL);
-
-    if (code != CCORD_OK) {
-        log_warn("[job] Failed to send interaction response for interaction %" PRIu64 ": %d", job->id, code);
+        CCORDcode code = discord_create_interaction_response(client, job->id, job->token, &params, NULL);
+        if (code != CCORD_OK) {
+            log_warn("[job] Failed to send interaction response for interaction %" PRIu64 ": %d", job->id, code);
+        }
     }
 }
 
@@ -163,7 +197,7 @@ void hammy_job_run(hammy_job_t* job, struct discord* client) {
     const hammy_command_t* command = hammy_bot_find_command(job->bot, job->command);
     if (!command || !command->handler) {
         log_warn("[job] No handler found for command '%s'.", job->command ? job->command : "unknown");
-        hammy_job_reply(job, client, "I don't know that command!");
+        hammy_job_reply(job, client, "Unknown Command", "I don't know that command!", true);
         return;
     }
 

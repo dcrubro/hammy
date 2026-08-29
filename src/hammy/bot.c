@@ -9,6 +9,7 @@
 #include <hammy/command.h>
 #include <hammy/job.h>
 #include <hammy/pool.h>
+#include <hammy/embeds.h>
 
 static void hammy_bot_attach(struct discord* client, hammy_bot_t* bot) {
     discord_set_data(client, bot);
@@ -36,12 +37,26 @@ static void hammy_bot_on_interaction(struct discord* client, const struct discor
         
         struct discord_interaction_response params = {
             .type = DISCORD_INTERACTION_CHANNEL_MESSAGE_WITH_SOURCE,
-            .data = &(struct discord_interaction_callback_data){
-                .content = "I don't know that command!"
-            }
         };
 
-        CCORDcode code = discord_create_interaction_response(client, event->id, event->token, &params, NULL);
+        struct discord_embed embed[1];
+        CCORDcode code;
+        if (hammy_embeds_customerror(client, embed, NULL, "Unknown Command", "I don't know that command!", NULL, 0)) {
+            params.data = &(struct discord_interaction_callback_data){
+                .embeds = &(struct discord_embeds){
+                    .size = 1,
+                    .array = embed
+                }
+            };
+            
+            code = discord_create_interaction_response(client, event->id, event->token, &params, NULL);
+        } else {
+            params.data = &(struct discord_interaction_callback_data){
+                .content = "I don't know that command!"
+            };
+
+            code = discord_create_interaction_response(client, event->id, event->token, &params, NULL);
+        }
 
         if (code != CCORD_OK) {
             log_warn("[job] Failed to send interaction error response for interaction %" PRIu64 ": %d", event->id, code);
@@ -76,14 +91,14 @@ static void hammy_bot_on_interaction(struct discord* client, const struct discor
             break;
         case HAMMY_PUSH_FULL:
             log_warn("[bot] Queue pool full. Cannot queue job for interaction '%s'.", name ? name : "(null)");
-            hammy_job_reply(job, client, "I am a bit busy right now! Please try again later.");
+            hammy_job_reply(job, client, "Bot is Busy", "I am a bit busy right now! Please try again later.", true);
             hammy_job_destroy(&job);
             break;
         case HAMMY_PUSH_SHUTDOWN:
             // Also covers the window before on_ready starts the pool, since
             // hammy_pool_push() reports a NULL pool the same way.
             log_error("[bot] Worker pool unavailable. Cannot queue job for interaction '%s'.", name ? name : "(null)");
-            hammy_job_reply(job, client, "Hammy is not accepting commands right now. Please try again shortly.");
+            hammy_job_reply(job, client, "Bot is Offline", "Hammy is not accepting commands right now. Please try again shortly.", true);
             hammy_job_destroy(&job);
             break;
     }

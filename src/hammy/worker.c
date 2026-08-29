@@ -48,12 +48,12 @@ static void* hammy_worker_main(void* arg) {
         pthread_mutex_unlock(&pool->lock);
 
         // From here, the worker owns the job and is responsible for destroying it.
-        log_info("[worker %d] Processing job %llu from user %llu", worker->id, job->id, job->user);
+        log_info("[worker %d] Processing job %lu from user %lu", worker->id, job->id, job->user);
         int64_t age = hammy_job_age_ms(job, worker->clientCopy);
 
         if (age > HAMMY_JOB_MAX_AGE_MS) {
             log_warn("[worker %d] Dropping stale job '%s' (age %lld ms)", worker->id, job->command ? job->command : "unknown", (long long)age);
-            hammy_job_reply(job, worker->clientCopy, "Sorry, your command took too long to process and was dropped. Please try again.");
+            hammy_job_reply(job, worker->clientCopy, "Command Timeout", "Sorry, your command took too long to process and was dropped. Please try again.", true);
         } else {
             hammy_job_run(job, worker->clientCopy);
         }

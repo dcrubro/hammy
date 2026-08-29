@@ -56,10 +56,10 @@ void hammy_job_run(hammy_job_t* job, struct discord* client);
  
 // Edits the (already deferred) interaction response with a plain text body.
 // Used by hammy_job_run() and by the pool's error paths.
-void hammy_job_reply(const hammy_job_t* job, struct discord* client, const char* content);
+void hammy_job_reply(const hammy_job_t* job, struct discord* client, const char* title, const char* content, bool isError);
 
 // Sends a fresh interaction response with a plain text body.
 // Only valid on the instant path, where nothing has been sent yet.
-void hammy_job_respond(const hammy_job_t* job, struct discord* client, const char* content);
+void hammy_job_respond(const hammy_job_t* job, struct discord* client, const char* title, const char* content, bool isError);
 
 #endif
