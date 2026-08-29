@@ -1,10 +1,25 @@
 #include <concord/discord.h>
+#include <concord/discord-internal.h>
 #include <concord/log.h>
 #include <stdlib.h>
- 
+
 #include <hammy/job.h>
 #include <hammy/pool.h>
 #include <hammy/worker.h>
+
+// Workaround for a concord 3.0.1 bug. _discord_clone_gateway_cleanup()
+// (discord-client.c:833) frees payload.json.table and then frees payload.data
+// as well, but payload.data is a jsmnf_pair pointing INTO that table, not a
+// separate allocation. Every discord_cleanup() of a clone is therefore an
+// invalid free. Clearing the field first skips that free; the table it points
+// into is still released, so nothing leaks.
+static void hammy_worker_cleanup_clone(struct discord* clone) {
+    if (!clone) { return; }
+
+    clone->gw.payload.data = NULL;
+
+    discord_cleanup(clone);
+}
 
 static void* hammy_worker_main(void* arg) {
     hammy_worker_t* worker = (hammy_worker_t*)arg;
@@ -63,8 +78,11 @@ bool hammy_worker_start(hammy_worker_t* worker, hammy_pool_t* pool, struct disco
     worker->clientCopy = NULL;
     worker->started = false;
 
-    // According to the concord spec, each thread must have its own discord client, so we clone it here.
-    // However, concord's buffers, URLs, headers, etc. are NOT shared-safe. They're per-client.
+    // Each thread needs its own client. The queues, pollers and timers are all
+    // shared through pointers, but client->registry - the reflect-c registry
+    // that serialises request bodies on the calling thread - is not.
+    // discord_clone() copies the gateway's *current* payload, so this only
+    // works while a dispatch is in flight. See hammy_pool_create().
     worker->clientCopy = discord_clone(client);
     if (!worker->clientCopy) {
         log_error("[worker %d] Failed to clone client", id);
@@ -73,7 +91,7 @@ bool hammy_worker_start(hammy_worker_t* worker, hammy_pool_t* pool, struct disco
 
     if (pthread_create(&worker->thread, NULL, &hammy_worker_main, worker) != 0) {
         log_error("[worker %d] Failed to create thread", id);
-        discord_cleanup(worker->clientCopy);
+        hammy_worker_cleanup_clone(worker->clientCopy);
         worker->clientCopy = NULL;
 
         return false;
@@ -93,7 +111,7 @@ void hammy_worker_join(hammy_worker_t* worker) {
     }
 
     if (worker->clientCopy) {
-        discord_cleanup(worker->clientCopy);
+        hammy_worker_cleanup_clone(worker->clientCopy);
         worker->clientCopy = NULL;
     }
 }

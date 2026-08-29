@@ -15,6 +15,8 @@ struct hammy_worker_t {
 
 // Clones client, spawns the thread. Returns false on clone or spawn failure,
 // leaving the worker safe to pass to hammy_worker_join().
+// Inherits hammy_pool_create()'s precondition: the clone only succeeds from
+// inside a gateway dispatch callback.
 bool hammy_worker_start(hammy_worker_t* worker, hammy_pool_t* pool, struct discord* client, int id);
  
 // Joins the thread if it was started and cleans up the clone.

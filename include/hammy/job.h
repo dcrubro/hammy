@@ -30,12 +30,14 @@ struct hammy_job_t {
     hammy_arg_t* args; // Array of size nArgs. Owning, array and contents.
     size_t nArgs;
     int64_t queuedAt; // Staleness checks, in ms. From discord_timestamp().
+
+    hammy_bot_t* bot; // NOT owning, used to access the command table
 };
 
 // Deep-copies everything the job needs out of the interaction event, so the
 // event may be freed by Concord the moment the handler returns.
 // Returns NULL on allocation failure.
-hammy_job_t* hammy_job_create(struct discord* client, const struct discord_interaction* event);
+hammy_job_t* hammy_job_create(hammy_bot_t* bot, const struct discord_interaction* event);
  
 // Frees the job and everything it owns. NULLs the passing reference.
 // Safe to call with NULL or with a pointer to NULL.
@@ -55,5 +57,9 @@ void hammy_job_run(hammy_job_t* job, struct discord* client);
 // Edits the (already deferred) interaction response with a plain text body.
 // Used by hammy_job_run() and by the pool's error paths.
 void hammy_job_reply(const hammy_job_t* job, struct discord* client, const char* content);
+
+// Sends a fresh interaction response with a plain text body.
+// Only valid on the instant path, where nothing has been sent yet.
+void hammy_job_respond(const hammy_job_t* job, struct discord* client, const char* content);
 
 #endif

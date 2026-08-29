@@ -43,6 +43,9 @@ struct hammy_pool_t {
 // Creates the pool and starts n_workers threads, each with its own
 // discord_clone() of client. Pass 0 for either size to take the defaults.
 // Returns NULL on failure; no threads are left running in that case.
+// MUST be called from inside a gateway dispatch callback (on_ready is the
+// earliest one): discord_clone() copies the gateway's current payload and
+// fails with CCORD_ERRNO when there isn't one.
 hammy_pool_t* hammy_pool_create(struct discord* client, size_t nWorkers, size_t queueCap);
  
 // Enqueues a job. See hammy_push_result_t for who owns the job afterwards.
@@ -56,7 +59,8 @@ hammy_push_result_t hammy_pool_push(hammy_pool_t* pool, hammy_job_t* job);
 void hammy_pool_shutdown(hammy_pool_t* pool);
  
 // As above but discards anything still queued (each dropped job gets an
-// apology reply if it can be sent quickly).
+// apology reply). Call from the gateway thread only - the apologies are
+// serialised through the original client, which that thread owns.
 void hammy_pool_shutdown_now(hammy_pool_t* pool);
  
 // Frees the pool. Runs hammy_pool_shutdown() first if it has not happened yet.

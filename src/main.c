@@ -1,44 +1,90 @@
-#include <string.h>
-#include <signal.h>
+#include <concord/discord.h>
 #include <concord/log.h>
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include <hammy/bot.h>
+#include <hammy/pool.h>
 
-static void on_signal(int sig) {
+#define HAMMY_CONFIG_PATH "config.json"
+
+static hammy_bot_t* g_bot = NULL;
+
+static void hammy_on_sigint(int sig) {
     (void)sig;
-    discord_shutdown_all();
+
+    // Only sets a flag inside Concord and makes discord_run() return. The real
+    // teardown happens back in main().
+    if (g_bot && g_bot->client) discord_shutdown(g_bot->client);
 }
 
-void on_ready(struct discord* client, const struct discord_ready* event) {
-    (void)client;
-    log_info("[master] Logged in as %s", event->user->username);
+static void hammy_on_ready(struct discord* client, const struct discord_ready* event) {
+    hammy_bot_t* bot = (hammy_bot_t*)discord_get_data(client);
+    if (!bot) return;
+
+    log_info("[hammy] logged in as %s", event->user->username);
+
+    // The application id is only available now, and both registration and
+    // response editing need it.
+    bot->appId = event->application->id;
+
+    // discord_clone() deep-copies the gateway's *current* payload, so it only
+    // succeeds from inside a dispatch callback. READY is the first one we get.
+    if (!hammy_bot_start_pool(bot, 0, 0)) { // 0, 0 = defaults
+        log_fatal("[hammy] Could not start the worker pool. Shutting down.");
+        discord_shutdown(client);
+
+        return;
+    }
+
+    hammy_bot_register_commands(bot);
 }
 
 int main(void) {
-    struct sigaction sa = { 0 };
-    sa.sa_handler = &on_signal;
-    sigemptyset(&sa.sa_mask);
-    sa.sa_flags = 0;   /* deliberately no SA_RESTART */
-    
-    sigaction(SIGTERM, &sa, NULL);
-    sigaction(SIGINT,  &sa, NULL);
-
     ccord_global_init();
 
     hammy_bot_t* bot = hammy_bot_create();
     if (!bot) {
-        log_error("[master] Hammy Bot creation returned NULL! Bailing!");
+        fprintf(stderr, "could not create bot\n");
         ccord_global_cleanup();
 
-        return 1;
+        return EXIT_FAILURE;
     }
 
-    hammy_bot_set_on_ready(bot, &on_ready);
-    hammy_bot_run(bot); // This will block and exit afterwards
+    // Token and logging settings both come out of config.json.
+    bot->client = discord_config_init(HAMMY_CONFIG_PATH);
+    if (!bot->client) {
+        fprintf(stderr, "could not init discord client from %s\n", HAMMY_CONFIG_PATH);
+        hammy_bot_destroy(&bot);
+        ccord_global_cleanup();
+
+        return EXIT_FAILURE;
+    }
+
+    bool ok = false; // Declared before the gotos so they don't jump over it.
+
+    g_bot = bot;
+    signal(SIGINT, &hammy_on_sigint);
+    signal(SIGTERM, &hammy_on_sigint);
+
+    // Order matters: commands loaded before the ready callback can register
+    // them. The pool starts from on_ready, not here - see the comment there.
+    if (!hammy_bot_load_builtins(bot)) goto fail;
+    if (!hammy_bot_set_on_ready(bot, &hammy_on_ready)) goto fail;
+
+    // Blocks until shutdown. A NULL pool afterwards means on_ready bailed out
+    // before it could start one.
+    ok = hammy_bot_run(bot) && bot->pool != NULL;
 
     hammy_bot_destroy(&bot);
-    
     ccord_global_cleanup();
-    
-    return 0;
+
+    return ok ? EXIT_SUCCESS : EXIT_FAILURE;
+
+fail:
+    hammy_bot_destroy(&bot);
+    ccord_global_cleanup();
+
+    return EXIT_FAILURE;
 }

@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <hammy/bot.h>
+#include <hammy/command.h>
 #include <hammy/job.h>
 
 // strdup() is POSIX, so we'll keep a local and keep the code portable.
@@ -28,17 +30,19 @@ static u64snowflake hammy_job_extract_user(const struct discord_interaction* eve
     return 0;
 }
 
-hammy_job_t* hammy_job_create(struct discord* client, const struct discord_interaction* event) {
-    if (!client || !event) { return NULL; }
+hammy_job_t* hammy_job_create(hammy_bot_t* bot, const struct discord_interaction* event) {
+    if (!bot || !bot->client || !event) { return NULL; }
 
     hammy_job_t* job = (hammy_job_t*)calloc(1, sizeof(*job));
     if (!job) { return NULL; }
 
+    job->bot = bot;
     job->id = event->id;
-    job->appId = event->application_id;
     job->user = hammy_job_extract_user(event);
     job->token = hammy_strdup(event->token);
-    job->queuedAt = (int64_t)discord_timestamp(client);
+    job->queuedAt = (int64_t)discord_timestamp(bot->client);
+
+    job->appId = event->application_id ? event->application_id : bot->appId;
 
     if (!job->token) {
         goto fail;
@@ -135,13 +139,33 @@ void hammy_job_reply(const hammy_job_t* job, struct discord* client, const char*
     }
 }
 
+void hammy_job_respond(const hammy_job_t* job, struct discord* client, const char* content) {
+    if (!job || !client || !content) { return; }
+
+    struct discord_interaction_response params = {
+        .type = DISCORD_INTERACTION_CHANNEL_MESSAGE_WITH_SOURCE,
+        .data = &(struct discord_interaction_callback_data){
+            .content = (char*)content
+        }
+    };
+
+    CCORDcode code = discord_create_interaction_response(client, job->id, job->token, &params, NULL);
+
+    if (code != CCORD_OK) {
+        log_warn("[job] Failed to send interaction response for interaction %" PRIu64 ": %d", job->id, code);
+    }
+}
+
 void hammy_job_run(hammy_job_t* job, struct discord* client) {
     if (!job || !client) { return; }
 
-    // TODO: look job->command up in the bot's command vector and call its
-    // handler with (job, client). Placeholder until command.h grows a
-    // dispatch entry point.
     log_info("[job] Running command '%s' for interaction %" PRIu64, job->command ? job->command : "unknown", job->id);
+    const hammy_command_t* command = hammy_bot_find_command(job->bot, job->command);
+    if (!command || !command->handler) {
+        log_warn("[job] No handler found for command '%s'.", job->command ? job->command : "unknown");
+        hammy_job_reply(job, client, "I don't know that command!");
+        return;
+    }
 
-    hammy_job_reply(job, client, "This is a placeholder reply. The command handler is not yet implemented.");
+    command->handler(job, client);
 }

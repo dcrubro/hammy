@@ -487,7 +487,20 @@ file(COPY ${_libs} DESTINATION "@CONCORD_PREFIX@/lib")
     # the environment rather than the make command line because Concord's
     # Makefile appends its own -I flags to it; a command-line assignment would
     # override those and break the build.
-    set(CONCORD_CFLAGS "-O2 -g $<JOIN:${HAMMY_INSTRUMENT_COMPILE}, >")
+    # ... with one carve-out. chash.h's string hash is djb2-style:
+    #   (hash) = (((hash) << 1) + (hash)) + key[i];
+    # on a signed accumulator, so it deliberately relies on wraparound. That is
+    # two counts of UB per character -- the shift of a negative value and the
+    # overflowing add -- plus a third in the __chash_abs() that follows. With
+    # -fno-sanitize-recover it aborts the first time a ratelimit key hashes past
+    # LONG_MAX, which a guild command endpoint manages immediately.
+    #
+    # The wraparound is benign and the code is not ours to fix, so drop these
+    # two checks for Concord's build only. Everything else UBSan looks at stays
+    # on, and our own translation units keep the full set -- these flags are not
+    # in HAMMY_SANITIZER_FLAGS, only here.
+    set(CONCORD_UB_CARVEOUTS "-fno-sanitize=signed-integer-overflow -fno-sanitize=shift")
+    set(CONCORD_CFLAGS "-O2 -g $<JOIN:${HAMMY_INSTRUMENT_COMPILE}, > $<${HAMMY_IS_SANITIZED}:${CONCORD_UB_CARVEOUTS}>")
 
     # gencodecs/Makefile hardcodes CC/HOSTCC/CPP to "cc" for its host-side code
     # generator, with plain '=' assignments that the environment cannot override.

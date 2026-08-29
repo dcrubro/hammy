@@ -2,6 +2,7 @@
 #include <concord/log.h>
 #include <stdlib.h>
 
+#include <hammy/bot.h>
 #include <hammy/job.h>
 #include <hammy/pool.h>
 #include <hammy/worker.h>
@@ -104,19 +105,42 @@ static void hammy_pool_stop(hammy_pool_t* pool, bool drain) {
 
     pool->shutdown = true;
 
-    if (!drain) {
+    // Detach the queue under the lock, but apologise outside it - a REST
+    // enqueue has no business happening while the workers are blocked on it.
+    hammy_job_t** dropped = NULL;
+    size_t nDropped = 0;
+
+    if (!drain && pool->count > 0) {
+        dropped = (hammy_job_t**)calloc(pool->count, sizeof(*dropped));
+
         while (pool->count > 0) {
             hammy_job_t* job = pool->jobs[pool->head];
             pool->head = (pool->head + 1) % pool->cap;
             pool->count--;
 
-            hammy_job_destroy(&job);
+            // Out of memory on the way out is not worth a leak, so drop it quietly.
+            if (dropped) { dropped[nDropped++] = job; }
+            else { hammy_job_destroy(&job); }
         }
     }
 
     // Broadcast (NOT signal), every watier has to see the shutdown flag and exit, not just one.
     pthread_cond_broadcast(&pool->notEmpty);
     pthread_mutex_unlock(&pool->lock);
+
+    for (size_t i = 0; i < nDropped; i++) {
+        hammy_job_t* job = dropped[i];
+
+        // The job's bot back-reference carries the original client, which is
+        // the one this thread is allowed to serialise through.
+        if (job->bot && job->bot->client) {
+            hammy_job_reply(job, job->bot->client, "Hammy is shutting down, so this command was dropped. Please try again once it is back.");
+        }
+
+        hammy_job_destroy(&job);
+    }
+
+    free(dropped);
 
     for (size_t i = 0; i < pool->nWorkers; i++) {
         hammy_worker_join(&pool->workers[i]);
