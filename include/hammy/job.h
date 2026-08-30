@@ -55,11 +55,16 @@ int64_t hammy_job_age_ms(const hammy_job_t* job, struct discord* client);
 // Does not destroy the job.
 void hammy_job_run(hammy_job_t* job, struct discord* client, hammy_refdb_t* refdb);
  
-// Edits the (already deferred) interaction response with a plain text body.
+// Edits the (already deferred) interaction response with a titled embed,
+// falling back to a plain text body only if the embed cannot be built.
 // Used by hammy_job_run() and by the pool's error paths.
+//
+// Only valid on the deferred path: it edits a response, so something must have
+// answered the interaction already. Instant handlers want hammy_job_respond().
 void hammy_job_reply(const hammy_job_t* job, struct discord* client, const char* title, const char* content, bool isError);
 
-// Sends a fresh interaction response with a plain text body.
+// Sends a fresh interaction response with a titled embed, falling back to a
+// plain text body only if the embed cannot be built.
 // Only valid on the instant path, where nothing has been sent yet.
 void hammy_job_respond(const hammy_job_t* job, struct discord* client, const char* title, const char* content, bool isError);
 

@@ -25,6 +25,9 @@ static const char* SQL_PREFIX =
 static const char* SQL_VERSION =
     "SELECT value FROM ref_meta WHERE key = 'bundle_version'";
 
+static const char* SQL_MORSE =
+    "SELECT code FROM morse WHERE character = UPPER(?1) LIMIT 1";
+
 // Authorizer: the connection may read, and nothing else.
 //
 // SQLITE_OPEN_READONLY protects the MAIN database file. It does not stop
@@ -100,6 +103,7 @@ hammy_refdb_t* hammy_refdb_open(const char* path) {
 
     if (!prepare(db->handle, SQL_EXACT, &db->stExact)) { goto fail; }
     if (!prepare(db->handle, SQL_PREFIX, &db->stPrefix)) { goto fail; }
+    if (!prepare(db->handle, SQL_MORSE, &db->stMorse)) { goto fail; }
 
     sqlite3_stmt* st = NULL;
     if (prepare(db->handle, SQL_VERSION, &st)) {
@@ -129,6 +133,7 @@ bool hammy_refdb_close(hammy_refdb_t** db) {
     // (sqlite3_close() returns SQLITE_BUSY and the handle leaks)
     if (d->stExact) { sqlite3_finalize(d->stExact); }
     if (d->stPrefix) { sqlite3_finalize(d->stPrefix); }
+    if (d->stMorse) { sqlite3_finalize(d->stMorse); }
     
     if (d->handle) { sqlite3_close(d->handle); }
 
@@ -260,3 +265,38 @@ bool hammy_refdb_dxcc(hammy_refdb_t* db, const char* callsign, hammy_dxcc_t* out
     return search_prefixes(db, call, out);
 }
 
+bool hammy_refdb_get_morse(hammy_refdb_t* db, char c, const char** out) {
+    if (!db || !out) { return false; }
+
+    // The table is ASCII (ITU-R M.1677-1 has no non-Latin extensions), and a
+    // single byte out of a multi-byte UTF-8 sequence is not valid text to bind,
+    // so anything with the high bit set is a miss without touching SQLite.
+    if ((unsigned char)c & 0x80u) { return false; }
+
+    // Run the query with the character as a string. SQLite's UPPER() handles case-insensitivity.
+    // SQLITE_STATIC is safe because the statement is reset before this returns,
+    // so key never outlives the binding that points at it.
+    char key[2] = { c, '\0' };
+
+    sqlite3_reset(db->stMorse);
+    sqlite3_clear_bindings(db->stMorse);
+    sqlite3_bind_text(db->stMorse, 1, key, 1, SQLITE_STATIC);
+
+    bool hit = false;
+
+    if (sqlite3_step(db->stMorse) == SQLITE_ROW) {
+        const unsigned char* code = sqlite3_column_text(db->stMorse, 0);
+
+        if (code) {
+            // Copied rather than handed back directly: the column pointer dies
+            // at the reset below, and the caller has no way to know that.
+            snprintf(db->morseCode, sizeof(db->morseCode), "%s", (const char*)code);
+            *out = db->morseCode;
+            hit = true;
+        }
+    }
+
+    sqlite3_reset(db->stMorse);
+
+    return hit;
+}

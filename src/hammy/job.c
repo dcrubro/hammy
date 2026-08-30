@@ -22,6 +22,17 @@ static char* hammy_strdup(const char* src) {
     return dst;
 }
 
+// Logs a failed send, and only a failed send. Concord returns CCORD_PENDING for
+// an asynchronous request (which is every request made with a NULL ret, i.e.
+// all of ours) - the request has been queued, not rejected, so treating it as
+// an error warned on every single reply that actually worked.
+static void hammy_job_check_send(const hammy_job_t* job, CCORDcode code) {
+    if (code == CCORD_OK || code == CCORD_PENDING) { return; }
+
+    log_warn("[job] Failed to send interaction response for interaction %" PRIu64 ": %s (%d)",
+             job->id, ccord_strerror(code), code);
+}
+
 // Pulls the invoking user out of the event. Guild interactions carry it under
 // member->user, DM interactions under user directly.
 static u64snowflake hammy_job_extract_user(const struct discord_interaction* event) {
@@ -129,31 +140,26 @@ int64_t hammy_job_age_ms(const hammy_job_t* job, struct discord* client) {
 void hammy_job_reply(const hammy_job_t* job, struct discord* client, const char* title, const char* content, bool isError) {
     if (!job || !client || !content || !title) { return; }
 
-    if (hammy_embeds_customembed(client, NULL, NULL, title, content, NULL, 0, isError ? 0xFF0000 : 0x00FF00)) {
-        struct discord_interaction_response params = {
-            .type = DISCORD_INTERACTION_CHANNEL_MESSAGE_WITH_SOURCE,
-            .data = &(struct discord_interaction_callback_data){
-                .content = (char*)content
-            }
-        };
+    // Editing, not creating: every caller is on the deferred path, where the
+    // gateway thread already sent DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE. A second
+    // create on the same interaction is refused with "Interaction has already
+    // been acknowledged" (40060). Instant handlers want hammy_job_respond().
+    struct discord_edit_original_interaction_response params = { 0 };
 
-        CCORDcode code = discord_create_interaction_response(client, job->id, job->token, &params, NULL);
-        if (code != CCORD_OK) {
-            log_warn("[job] Failed to send interaction response for interaction %" PRIu64 ": %d", job->id, code);
-        }
+    // Both must outlive the call, so neither can be a compound literal inside
+    // the branch below.
+    struct discord_embed embed[1];
+    struct discord_embeds embeds = { .size = 1, .array = embed };
+
+    if (hammy_embeds_customembed(client, embed, NULL, title, content, NULL, 0, isError ? 0xFF0000 : 0x00FF00)) {
+        params.embeds = &embeds;
     } else {
-        struct discord_interaction_response params = {
-            .type = DISCORD_INTERACTION_CHANNEL_MESSAGE_WITH_SOURCE,
-            .data = &(struct discord_interaction_callback_data){
-                .content = (char*)content
-            }
-        };
-
-        CCORDcode code = discord_create_interaction_response(client, job->id, job->token, &params, NULL);
-        if (code != CCORD_OK) {
-            log_warn("[job] Failed to send interaction response for interaction %" PRIu64 ": %d", job->id, code);
-        }
+        // Only reachable on a bad argument, but a plain-text body still beats
+        // sending nothing at all.
+        params.content = (char*)content;
     }
+
+    hammy_job_check_send(job, discord_edit_original_interaction_response(client, job->appId, job->token, &params, NULL));
 }
 
 void hammy_job_respond(const hammy_job_t* job, struct discord* client, const char* title, const char* content, bool isError) {
@@ -171,10 +177,7 @@ void hammy_job_respond(const hammy_job_t* job, struct discord* client, const cha
             }
         };
 
-        CCORDcode code = discord_create_interaction_response(client, job->id, job->token, &params, NULL);
-        if (code != CCORD_OK) {
-            log_warn("[job] Failed to send interaction response for interaction %" PRIu64 ": %d", job->id, code);
-        }
+        hammy_job_check_send(job, discord_create_interaction_response(client, job->id, job->token, &params, NULL));
     } else {
         struct discord_interaction_response params = {
             .type = DISCORD_INTERACTION_CHANNEL_MESSAGE_WITH_SOURCE,
@@ -183,10 +186,7 @@ void hammy_job_respond(const hammy_job_t* job, struct discord* client, const cha
             }
         };
 
-        CCORDcode code = discord_create_interaction_response(client, job->id, job->token, &params, NULL);
-        if (code != CCORD_OK) {
-            log_warn("[job] Failed to send interaction response for interaction %" PRIu64 ": %d", job->id, code);
-        }
+        hammy_job_check_send(job, discord_create_interaction_response(client, job->id, job->token, &params, NULL));
     }
 }
 
