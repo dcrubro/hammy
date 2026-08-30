@@ -41,7 +41,10 @@ bool hammy_bot_add_command(hammy_bot_t* bot, const hammy_command_t* command);
 // Looks a command up by name. Returns a pointer into the vector's storage, or
 // NULL. Valid until the vector is next modified, which after startup is never.
 const hammy_command_t* hammy_bot_find_command(const hammy_bot_t* bot, const char* name);
- 
+
+// Wipes all commands from the Discord registry. Return true on success, false on failure.
+bool hammy_bot_deregister_all_commands(hammy_bot_t* bot);
+
 // Registers all commands with Discord. Return true if succeeded or already
 // registered; false if failure. Requires bot->application_id to be set, so call
 // this from on_ready, not before.

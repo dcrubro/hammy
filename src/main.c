@@ -29,6 +29,8 @@ static void hammy_on_ready(struct discord* client, const struct discord_ready* e
     // response editing need it.
     bot->appId = event->application->id;
 
+    //hammy_bot_deregister_all_commands(bot);
+
     // discord_clone() deep-copies the gateway's *current* payload, so it only
     // succeeds from inside a dispatch callback. READY is the first one we get.
     if (!hammy_bot_start_pool(bot, 0, 0)) { // 0, 0 = defaults

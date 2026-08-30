@@ -133,6 +133,8 @@ bool hammy_bot_add_command(hammy_bot_t* bot, const hammy_command_t* command) {
         return false;
     }
 
+    log_info("[bot] Loaded command '%s'.", command->name);
+    
     return true;
 }
 
@@ -181,6 +183,41 @@ bool hammy_bot_start_pool(hammy_bot_t* bot, size_t nWorkers, size_t queueCap) {
     return true;
 }
 
+bool hammy_bot_deregister_all_commands(hammy_bot_t* bot) {
+    // TODO: This leaks and I don't know why. Figure it out.
+    if (!bot || !bot->client) { return false; }
+
+    struct discord_application_commands cmds = {0};
+    struct discord_ret_application_commands ret = { .sync = &cmds };
+
+    if (discord_get_global_application_commands(bot->client, bot->appId, &ret) == CCORD_OK) {
+        for (int i = 0; i < cmds.size; i++) {
+            discord_delete_global_application_command(bot->client, bot->appId, cmds.array[i].id, NULL);
+        }
+    } else {
+        log_error("[bot] Failed to deregister global commands!");
+        return false;
+    }
+
+    const char* devGuild = getenv("HAMMY_DEV_GUILD");
+    u64snowflake guildId = devGuild ? (u64snowflake)strtoull(devGuild, NULL, 10) : 0;
+
+    if (guildId) {
+        if (discord_get_guild_application_commands(bot->client, bot->appId, guildId, &ret) == CCORD_OK) {
+            for (int i = 0; i < cmds.size; i++) {
+                discord_delete_guild_application_command(bot->client, bot->appId, guildId, cmds.array[i].id, NULL);
+            }
+        } else {
+            log_error("[bot] Failed to deregister dev guild commands!");
+            return false;
+        }
+    }
+
+    bot->commandsRegistered = false;
+
+    return true;
+}
+
 bool hammy_bot_register_commands(hammy_bot_t* bot) {
     if (!bot || !bot->client) { return false; }
     if (bot->commandsRegistered) { return true; } // Already registered
@@ -190,7 +227,6 @@ bool hammy_bot_register_commands(hammy_bot_t* bot) {
         return false;
     }
 
-    // TODO: Temporary - dev guild ID for testing.
     const char* devGuild = getenv("HAMMY_DEV_GUILD");
     u64snowflake guildId = devGuild ? (u64snowflake)strtoull(devGuild, NULL, 10) : 0;
 

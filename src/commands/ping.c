@@ -23,7 +23,7 @@ void hammy_cmd_ping(const hammy_job_t* job, struct discord* client) {
  
     char body[256];
     snprintf(body, sizeof(body),
-             "Pong!\nGateway: `%d ms`\nHandled in: `%" PRId64 " ms`",
+             "Gateway: `%d ms`\nHandled in: `%" PRId64 " ms`",
              gatewayMs, handledMs);
  
     hammy_job_respond(job, client, "Pong!", body, false);
