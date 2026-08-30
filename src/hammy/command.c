@@ -6,7 +6,7 @@
 // Handlers live in src/hammy/commands/. Declared here rather than in a header
 // so adding a command touches exactly two places: its own .c file and this
 // table.
-void hammy_cmd_ping(const hammy_job_t* job, struct discord* client);
+void hammy_cmd_ping(const hammy_job_t* job, struct discord* client, const hammy_refdb_t* refdb);
 
 // The command table. Pure data - no allocation, no lifetime, no destructor.
 // Copying an entry into the bot's vector is a plain struct copy, and the vector

@@ -55,7 +55,7 @@ static void* hammy_worker_main(void* arg) {
             log_warn("[worker %d] Dropping stale job '%s' (age %lld ms)", worker->id, job->command ? job->command : "unknown", (long long)age);
             hammy_job_reply(job, worker->clientCopy, "Command Timeout", "Sorry, your command took too long to process and was dropped. Please try again.", true);
         } else {
-            hammy_job_run(job, worker->clientCopy);
+            hammy_job_run(job, worker->clientCopy, worker->refdb);
         }
 
         hammy_job_destroy(&job);
@@ -89,6 +89,12 @@ bool hammy_worker_start(hammy_worker_t* worker, hammy_pool_t* pool, struct disco
         return false;
     }
 
+    // Open a reference to sqlite
+    worker->refdb = hammy_refdb_open("hammy-ref.sqlite"); // TODO: Probably don't hardcode this?
+    if (!worker->refdb) {
+        log_error("[worker %d] Failed to open ref to sqlite. Commands requiring it will be unavailable!", id); // TODO: Consider making this a hard-fail
+    }
+
     if (pthread_create(&worker->thread, NULL, &hammy_worker_main, worker) != 0) {
         log_error("[worker %d] Failed to create thread", id);
         hammy_worker_cleanup_clone(worker->clientCopy);
@@ -113,5 +119,9 @@ void hammy_worker_join(hammy_worker_t* worker) {
     if (worker->clientCopy) {
         hammy_worker_cleanup_clone(worker->clientCopy);
         worker->clientCopy = NULL;
+    }
+
+    if (worker->refdb) {
+        hammy_refdb_close(&worker->refdb);
     }
 }

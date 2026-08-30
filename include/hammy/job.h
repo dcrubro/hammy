@@ -7,6 +7,7 @@
 #include <stdint.h>
 
 #include <hammy/types.h>
+#include <hammy/refdb.h>
 
 // A single slash-command option. Flattened out of the interaction event.
 // Both strings are owned by the job.
@@ -52,7 +53,7 @@ int64_t hammy_job_age_ms(const hammy_job_t* job, struct discord* client);
 // Runs the job to completion and sends the reply. Called from a worker thread,
 // so client MUST be that worker's own clone, never the gateway client.
 // Does not destroy the job.
-void hammy_job_run(hammy_job_t* job, struct discord* client);
+void hammy_job_run(hammy_job_t* job, struct discord* client, hammy_refdb_t* refdb);
  
 // Edits the (already deferred) interaction response with a plain text body.
 // Used by hammy_job_run() and by the pool's error paths.

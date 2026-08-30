@@ -5,10 +5,13 @@
 #include <hammy/types.h>
 #include <pthread.h>
 
+#include <hammy/refdb.h>
+
 struct hammy_worker_t {
     pthread_t thread;
     struct discord* clientCopy; // Clone of the client for concord threading safety - owning
     hammy_pool_t* pool; // Non-owning back-reference
+    hammy_refdb_t* refdb; // Owning sqlite ref
     int id; // Log logging mainly
     bool started; // For joining
 };

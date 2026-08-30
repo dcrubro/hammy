@@ -6,6 +6,7 @@
 #include <stdbool.h>
 
 #include <hammy/types.h>
+#include <hammy/refdb.h>
 
 // A command handler. Runs either on the gateway thread (instant commands) or on
 // a worker thread (deferred ones), so it must not assume either. client is
@@ -16,7 +17,7 @@
 // or discord_edit_original_interaction_response().
 //
 // The handler does NOT own the job and must not destroy it.
-typedef void (*hammy_command_fn)(const hammy_job_t* job, struct discord* client);
+typedef void (*hammy_command_fn)(const hammy_job_t* job, struct discord* client, const hammy_refdb_t* refdb);
  
 // Plain old data. Every field points at static storage, so this struct owns
 // nothing, copies freely, and needs no destructor - the vector can be created

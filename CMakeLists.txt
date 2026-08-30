@@ -553,6 +553,15 @@ file(COPY ${_libs} DESTINATION "@CONCORD_PREFIX@/lib")
 endif()
 
 # ---------------------------------------------------------
+# SQLite3 (hammy's own dependency, unlike the Concord ones above)
+#
+# CMake's bundled FindSQLite3 module (3.14+) exports the SQLite::SQLite3
+# imported target and covers both a system package and a manually-specified
+# SQLITE3_INCLUDE_DIR/SQLITE3_LIBRARY, so no vendoring is needed here.
+# ---------------------------------------------------------
+find_package(SQLite3 REQUIRED)
+
+# ---------------------------------------------------------
 # Output directories
 # ---------------------------------------------------------
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -584,7 +593,7 @@ target_include_directories(hammy SYSTEM PRIVATE
 # target's interface includes as -isystem, so upstream's headers never trip our
 # warning set and no second copy under third_party/ is needed.
 
-target_link_libraries(hammy PRIVATE concord::concord)
+target_link_libraries(hammy PRIVATE concord::concord SQLite::SQLite3)
 if(HAMMY_CONCORD_EXTERNAL)
     add_dependencies(hammy ${HAMMY_CONCORD_EXTERNAL})
 endif()
@@ -630,6 +639,7 @@ message(STATUS "hammy: static analyzer [Analyzer]     ${HAMMY_ANALYZER_FLAGS}")
 message(STATUS "hammy: hardening       ${HAMMY_ENABLE_HARDENING}")
 message(STATUS "hammy: LTO             ${HAMMY_ENABLE_LTO}")
 message(STATUS "hammy: concord         ${concord_SOURCE_DIR} (v3.0.1)")
+message(STATUS "hammy: sqlite3         ${SQLite3_LIBRARIES} (v${SQLite3_VERSION})")
 if(CMAKE_BUILD_TYPE STREQUAL "Analyzer" AND NOT HAMMY_ANALYZER_FLAGS)
     message(STATUS "hammy: NOTE - Analyzer config has no static analyzer on "
                    "${CMAKE_C_COMPILER_ID}; use scan-build over this build tree")

@@ -73,7 +73,7 @@ static void hammy_bot_on_interaction(struct discord* client, const struct discor
 
     // Instant path: no defer or queue, answered on the spot
     if (command->instant) {
-        command->handler(job, client);
+        command->handler(job, client, bot->refdb);
         hammy_job_destroy(&job);
         return;
     }
@@ -119,6 +119,12 @@ hammy_bot_t* hammy_bot_create() {
     if (!bot->commands) {
         free(bot);
         return NULL;
+    }
+
+    // Open a reference to sqlite
+    bot->refdb = hammy_refdb_open("hammy-ref.sqlite"); // TODO: Probably don't hardcode this?
+    if (!bot->refdb) {
+        log_error("[bot] Failed to open ref to sqlite. Commands requiring it will be unavailable!"); // TODO: Consider making this a hard-fail
     }
 
     return bot;
@@ -309,6 +315,10 @@ bool hammy_bot_destroy(hammy_bot_t** bot) {
     if (b->client) {
         discord_cleanup(b->client);
         b->client = NULL;
+    }
+
+    if (b->refdb) {
+        hammy_refdb_close(&b->refdb);
     }
 
     free(*bot);

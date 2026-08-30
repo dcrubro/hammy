@@ -7,9 +7,11 @@
 
 #include <hammy/types.h>
 #include <hammy/command.h>
+#include <hammy/refdb.h>
 
 struct hammy_bot_t {
     struct discord* client; // Owning reference to the client - handoff from main.c
+    hammy_refdb_t* refdb; // Owning reference to sqlite - the master and each worker has their own
     bool commandsRegistered; // A flag if commands have been registered. Avoid re-registering every reconnect.
     vector_t* commands; // vector_t of commands. Owning the vector, NOT the elements.
     hammy_pool_t* pool; // Owning reference to the thread pool.

@@ -190,8 +190,12 @@ void hammy_job_respond(const hammy_job_t* job, struct discord* client, const cha
     }
 }
 
-void hammy_job_run(hammy_job_t* job, struct discord* client) {
+void hammy_job_run(hammy_job_t* job, struct discord* client, hammy_refdb_t* refdb) {
     if (!job || !client) { return; }
+    if (!refdb) {
+        // TODO: Consider making this a hard-fail
+        log_warn("[job] Ran command '%s' for interaction %" PRIu64 " without a valid refdb! SQLite functions will be unavailable!", job->command ? job->command : "unknown", job->id);
+    }
 
     log_info("[job] Running command '%s' for interaction %" PRIu64, job->command ? job->command : "unknown", job->id);
     const hammy_command_t* command = hammy_bot_find_command(job->bot, job->command);
@@ -201,5 +205,5 @@ void hammy_job_run(hammy_job_t* job, struct discord* client) {
         return;
     }
 
-    command->handler(job, client);
+    command->handler(job, client, refdb);
 }
