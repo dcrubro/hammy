@@ -86,6 +86,10 @@ static const char SQL_COUNTRY_LIST[] =
 static const char SQL_COUNTRY_KNOWN[] =
     "SELECT 1 FROM license_classes WHERE country = ?1 LIMIT 1";
 
+// Resolve Q-Code to question/answer
+static const char SQL_QCODE[] =
+    "SELECT question, answer FROM qcodes WHERE code = UPPER(?1) LIMIT 1";
+
 // Authorizer: the connection may read, and nothing else.
 //
 // SQLITE_OPEN_READONLY protects the MAIN database file. It does not stop
@@ -138,6 +142,7 @@ static const hammy_stmt_def_t HAMMY_STATEMENTS[] = {
     HAMMY_STMT(stExact,        SQL_EXACT),
     HAMMY_STMT(stPrefix,       SQL_PREFIX),
     HAMMY_STMT(stMorse,        SQL_MORSE),
+    HAMMY_STMT(stQCode,        SQL_QCODE),
     HAMMY_STMT(stFreqMain,     SQL_FREQ_MAIN),
     HAMMY_STMT(stFreqIaru,     SQL_FREQ_IARU),
     HAMMY_STMT(stFreqNearest,  SQL_FREQ_NEAREST),
@@ -442,6 +447,51 @@ bool hammy_refdb_get_morse(hammy_refdb_t* db, char c, const char** out) {
     }
 
     sqlite3_reset(db->stMorse);
+
+    return hit;
+}
+
+bool hammy_refdb_get_qcode(hammy_refdb_t* db, const char* code, const char** outQuestion, const char** outAnswer) {
+    if (!db || !code || !outQuestion || !outAnswer) { return false; }
+
+    sqlite3_stmt* const needed[] = { db->stQCode };
+    if (!stmts_ready("qcodes", needed, 1)) { return false; }
+
+    // Read the get_morse comment, I ain't writing this again (entire string edition)
+    for (const char* p = code; *p != '\0'; p++) {
+        if ((unsigned char)*p & 0x80u) { return false; }
+    }
+
+    // Query the string
+    sqlite3_reset(db->stQCode);
+    sqlite3_clear_bindings(db->stQCode);
+    sqlite3_bind_text(db->stQCode, 1, code, -1, SQLITE_TRANSIENT); // -1 tells SQLite to figure out the length itself (strlen() call - requires NULL term)
+
+    bool hit = false;
+
+    if (sqlite3_step(db->stQCode) == SQLITE_ROW) {
+        if (sqlite3_column_count(db->stQCode) < 2) { // Error
+            sqlite3_reset(db->stQCode);
+            return false;
+        }
+
+        const unsigned char* questionStr = sqlite3_column_text(db->stQCode, 0);
+        const unsigned char* answerStr = sqlite3_column_text(db->stQCode, 1);
+
+        if (questionStr) {
+            snprintf(db->qcodeQuestion, sizeof(db->qcodeQuestion), "%s", (const char*)questionStr);
+            *outQuestion = db->qcodeQuestion;
+            hit = true;
+        }
+        
+        if (answerStr) {
+            snprintf(db->qcodeAnswer, sizeof(db->qcodeAnswer), "%s", (const char*)answerStr);
+            *outAnswer = db->qcodeAnswer;
+            hit = true;
+        }
+    }
+
+    sqlite3_reset(db->stQCode);
 
     return hit;
 }

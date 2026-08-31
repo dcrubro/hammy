@@ -7,8 +7,6 @@
 #include <hammy/job.h>
 #include <hammy/refdb.h>
 
-#include <dlibc/vector.h>
-
 // The reply goes out as an embed description, which Discord caps at 4096
 // characters, so the two halves get separate budgets that still leave room for
 // the labels between them. Capping at all is what keeps an unbounded,
