@@ -8,5 +8,8 @@ typedef struct hammy_command_t hammy_command_t;
 typedef struct hammy_bot_t hammy_bot_t;
 typedef struct hammy_refdb_t hammy_refdb_t;
 typedef struct hammy_dxcc_t hammy_dxcc_t;
+typedef struct hammy_freq_priv_t hammy_freq_priv_t; 
+typedef struct hammy_freq_iaru_t hammy_freq_iaru_t; 
+typedef struct hammy_freq_t hammy_freq_t; 
 
 #endif

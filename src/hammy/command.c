@@ -8,6 +8,7 @@
 // table.
 void hammy_cmd_ping(const hammy_job_t* job, struct discord* client, const hammy_refdb_t* refdb);
 void hammy_cmd_morse(const hammy_job_t* job, struct discord* client, const hammy_refdb_t* refdb);
+void hammy_cmd_freq(const hammy_job_t* job, struct discord* client, const hammy_refdb_t* refdb);
 
 // TODO: Temporary - move to a proper options system; e.g. a vector of heap-allocated options or something. For now, just point at static storage.
 static struct discord_application_command_option morse_opts[] = {
@@ -20,6 +21,18 @@ static struct discord_application_command_options morse_opts_struct = {
     .array = morse_opts
 };
 
+static struct discord_application_command_option freq_opts[] = {
+    { .type = DISCORD_APPLICATION_OPTION_STRING, .name = "frequency",
+      .description = "Frequency in MHz", .required = true },
+    { .type = DISCORD_APPLICATION_OPTION_STRING, .name = "country",
+       .description = "Country code to look up (e.g. US) - Defaults to US if none specified.", .required = false },
+};
+
+static struct discord_application_command_options freq_opts_struct = {
+    .size = 2,
+    .array = freq_opts
+};
+
 // The command table. Pure data - no allocation, no lifetime, no destructor.
 // Copying an entry into the bot's vector is a plain struct copy, and the vector
 // may be created with a NULL destructor hook.
@@ -28,6 +41,7 @@ static struct discord_application_command_options morse_opts_struct = {
 static const hammy_command_t hammy_builtin_commands[] = {
     { "ping", "Check whether Hammy is alive and how fast it is responding", NULL, &hammy_cmd_ping, true },
     { "morse", "Text to and from Morse code", &morse_opts_struct, &hammy_cmd_morse, true },
+    { "freq", "Band, segment and who can transmit", &freq_opts_struct, &hammy_cmd_freq, true }
 
     // Tier 0 commands go here as they land. All pure computation, so instant:
     //   { "grid",  "Maidenhead locator conversions", &grid_opts,  &hammy_cmd_grid,  true },

@@ -28,6 +28,61 @@ static const char* SQL_VERSION =
 static const char* SQL_MORSE =
     "SELECT code FROM morse WHERE character = UPPER(?1) LIMIT 1";
 
+// Band plus per-class privileges in one pass.
+//
+// Both LEFT JOINs matter. They are what makes "Technician: not permitted here"
+// appear as a row rather than vanishing - a user excluded from a segment needs
+// to be told so, not shown a shorter list.
+//
+// Boundary convention differs between the tables on purpose:
+//   bands          inclusive at both ends. 14.350 is still "20m".
+//   band_segments  half-open [low, high). 14.150 is the START of the phone
+//                  segment, not the end of the CW one. BETWEEN would match
+//                  both and the command would print contradictory modes.
+static const char* SQL_FREQ_MAIN =
+    "SELECT b.name, b.edge_low_hz, b.edge_high_hz,"
+    "       lc.code, lc.name, lc.rank,"
+    "       s.modes, s.low_hz, s.high_hz, s.max_power_w, s.notes"
+    "  FROM bands b"
+    "  LEFT JOIN license_classes lc"
+    "         ON lc.country = ?2"
+    "  LEFT JOIN band_segments s"
+    "         ON s.band_id  = b.id"
+    "        AND s.class_id = lc.id"
+    "        AND s.country  = ?2"
+    "        AND s.low_hz  <= ?1"
+    "        AND ?1         < s.high_hz"
+    " WHERE b.edge_low_hz <= ?1 AND ?1 <= b.edge_high_hz"
+    " ORDER BY lc.rank DESC, s.low_hz";
+ 
+// Regional allocation, independent of national licensing. country = '' and
+// class_id IS NULL mark these rows: they say what the band IS in a region, not
+// who may use it.
+static const char* SQL_FREQ_IARU =
+    "SELECT s.iaru_region, s.low_hz, s.high_hz, s.modes"
+    "  FROM band_segments s"
+    " WHERE s.country = '' AND s.class_id IS NULL"
+    "   AND s.low_hz <= ?1 AND ?1 < s.high_hz"
+    " ORDER BY s.iaru_region";
+ 
+// min() with two arguments is SQLite's scalar min, not the aggregate.
+static const char* SQL_FREQ_NEAREST =
+    "SELECT name, edge_low_hz, edge_high_hz,"
+    "       min(abs(edge_low_hz - ?1), abs(edge_high_hz - ?1))"
+    "  FROM bands ORDER BY 4 LIMIT 1";
+ 
+// Is the frequency exactly on a segment boundary for this country?
+static const char* SQL_FREQ_SEG_EDGE =
+    "SELECT 1 FROM band_segments"
+    " WHERE country = ?2 AND (low_hz = ?1 OR high_hz = ?1) LIMIT 1";
+ 
+static const char* SQL_countryKnown =
+    "SELECT 1 FROM license_classes WHERE country = ?1 LIMIT 1";
+ 
+static const char* SQL_COUNTRY_LIST =
+    "SELECT DISTINCT country FROM license_classes"
+    " WHERE country <> '' ORDER BY country";
+
 // Authorizer: the connection may read, and nothing else.
 //
 // SQLITE_OPEN_READONLY protects the MAIN database file. It does not stop
@@ -299,4 +354,245 @@ bool hammy_refdb_get_morse(hammy_refdb_t* db, char c, const char** out) {
     sqlite3_reset(db->stMorse);
 
     return hit;
+}
+
+// ---------------------------------------------------------------------------
+// Frequency parsing
+// ---------------------------------------------------------------------------
+
+// Copies a TEXT column into a fixed buffer, tolerating NULL.
+static void copy_text(sqlite3_stmt* st, int col, char* dst, size_t cap) {
+    const unsigned char* v = sqlite3_column_text(st, col);
+ 
+    snprintf(dst, cap, "%s", v ? (const char*)v : "");
+}
+ 
+bool hammy_freq_parse(const char* text, int64_t* outHz) {
+    if (!text || !outHz) { return false; }
+ 
+    while (*text == ' ' || *text == '\t') { text++; }
+ 
+    // Integer part.
+    int64_t whole = 0;
+    bool anyDigit = false;
+ 
+    while (*text >= '0' && *text <= '9') {
+        if (whole > INT64_MAX / 10 - 9) { return false; }   // absurd input
+        whole = whole * 10 + (*text - '0');
+        anyDigit = true;
+        text++;
+    }
+ 
+    // Fractional part, accumulated as digits rather than a double. Six decimal
+    // places of MHz is exactly 1 Hz, so anything beyond that is discarded.
+    int64_t frac = 0;
+    int fracDigits = 0;
+ 
+    if (*text == '.' || *text == ',') {
+        text++;
+ 
+        while (*text >= '0' && *text <= '9') {
+            if (fracDigits < 9) {
+                frac = frac * 10 + (*text - '0');
+                fracDigits++;
+            }
+            anyDigit = true;
+            text++;
+        }
+    }
+ 
+    if (!anyDigit) { return false; }
+ 
+    while (*text == ' ' || *text == '\t') { text++; }
+ 
+    // Unit. A bare number means MHz, which is what people type.
+    int64_t mult = 1000000;     // Hz per unit
+ 
+    if (*text) {
+        char unit[8] = {0};
+        size_t i = 0;
+ 
+        while (text[i] && i + 1 < sizeof(unit) && text[i] != ' ') {
+            char c = text[i];
+            unit[i] = (c >= 'A' && c <= 'Z') ? (char)(c - 'A' + 'a') : c;
+            i++;
+        }
+ 
+        if (!strcmp(unit, "hz"))                                { mult = 1; }
+        else if (!strcmp(unit, "khz") || !strcmp(unit, "k"))    { mult = 1000; }
+        else if (!strcmp(unit, "mhz") || !strcmp(unit, "m"))    { mult = 1000000; }
+        else if (!strcmp(unit, "ghz") || !strcmp(unit, "g"))    { mult = 1000000000; }
+        else { return false; }
+    }
+ 
+    // Scale the fraction to the unit without ever touching a double.
+    int64_t scale = 1;
+    for (int i = 0; i < fracDigits; i++) {
+        if (scale > INT64_MAX / 10) { return false; }
+        scale *= 10;
+    }
+ 
+    if (whole > INT64_MAX / mult) { return false; }
+ 
+    int64_t hz = whole * mult + (frac * mult) / scale;
+ 
+    if (hz <= 0 || hz > 300000000000LL) { return false; }   // 1 Hz .. 300 GHz
+ 
+    *outHz = hz;
+ 
+    return true;
+}
+
+// ---------------------------------------------------------------------------
+// Frequency lookup
+// ---------------------------------------------------------------------------
+
+static void normalise_country(const char* in, char* out, size_t cap) {
+    size_t j = 0;
+ 
+    if (!in || !*in) {
+        snprintf(out, cap, "US");   // default
+        return;
+    }
+ 
+    for (size_t i = 0; in[i] && j + 1 < cap; i++) {
+        char c = in[i];
+ 
+        if (c >= 'a' && c <= 'z') { c = (char)(c - 'a' + 'A'); }
+        if (c >= 'A' && c <= 'Z') { out[j++] = c; }
+    }
+ 
+    out[j] = '\0';
+ 
+    if (!out[0]) { snprintf(out, cap, "US"); }
+}
+ 
+static bool step_bool(sqlite3_stmt* st) {
+    bool got = (sqlite3_step(st) == SQLITE_ROW);
+    sqlite3_reset(st);
+ 
+    return got;
+}
+ 
+bool hammy_refdb_freq(hammy_refdb_t* db, int64_t freqHz, const char* country,
+                      hammy_freq_t* out) {
+    if (!db || !out || freqHz <= 0) { return false; }
+ 
+    memset(out, 0, sizeof(*out));
+    out->freqHz = freqHz;
+    normalise_country(country, out->country, sizeof(out->country));
+ 
+    // Does the bundle know this country at all? Only US privileges are seeded so
+    // far, so this is the common path and the message matters.
+    sqlite3_reset(db->stCountryKnown);
+    sqlite3_clear_bindings(db->stCountryKnown);
+    sqlite3_bind_text(db->stCountryKnown, 1, out->country, -1, SQLITE_TRANSIENT);
+    out->countryKnown = step_bool(db->stCountryKnown);
+ 
+    // Band and privileges.
+    sqlite3_stmt* st = db->stFreqMain;
+    sqlite3_reset(st);
+    sqlite3_clear_bindings(st);
+    sqlite3_bind_int64(st, 1, freqHz);
+    sqlite3_bind_text(st, 2, out->country, -1, SQLITE_TRANSIENT);
+ 
+    while (sqlite3_step(st) == SQLITE_ROW) {
+        if (!out->inBand) {
+            out->inBand = true;
+            copy_text(st, 0, out->band, sizeof(out->band));
+            out->bandLowHz = sqlite3_column_int64(st, 1);
+            out->bandHighHz = sqlite3_column_int64(st, 2);
+            out->atBandEdge = (freqHz == out->bandLowHz ||
+                                 freqHz == out->bandHighHz);
+        }
+ 
+        // A NULL class means the country has no licence classes at all; the row
+        // still carried the band, which is why it is read above first.
+        if (sqlite3_column_type(st, 3) == SQLITE_NULL) { continue; }
+        if (out->nPrivs >= HAMMY_FREQ_PRIVS_MAX) { continue; }
+ 
+        hammy_freq_priv_t* p = &out->privs[out->nPrivs++];
+ 
+        copy_text(st, 3, p->code, sizeof(p->code));
+        copy_text(st, 4, p->name, sizeof(p->name));
+        p->rank = sqlite3_column_int(st, 5);
+ 
+        p->permitted = (sqlite3_column_type(st, 6) != SQLITE_NULL);
+ 
+        if (p->permitted) {
+            copy_text(st, 6, p->modes, sizeof(p->modes));
+            p->segLowHz = sqlite3_column_int64(st, 7);
+            p->segHighHz = sqlite3_column_int64(st, 8);
+            p->maxPowerW = sqlite3_column_int(st, 9);   // 0 when NULL
+            copy_text(st, 10, p->notes, sizeof(p->notes));
+        }
+    }
+ 
+    sqlite3_reset(st);
+ 
+    // Not in any band: report the nearest one so the user can see how far off
+    // they are. Usually a typo - 15.000 instead of 14.150.
+    if (!out->inBand) {
+        st = db->stFreqNearest;
+        sqlite3_reset(st);
+        sqlite3_clear_bindings(st);
+        sqlite3_bind_int64(st, 1, freqHz);
+ 
+        if (sqlite3_step(st) == SQLITE_ROW) {
+            copy_text(st, 0, out->nearestBand, sizeof(out->nearestBand));
+            out->nearestLowHz = sqlite3_column_int64(st, 1);
+            out->nearestHighHz = sqlite3_column_int64(st, 2);
+            out->nearestDistanceHz = sqlite3_column_int64(st, 3);
+        }
+ 
+        sqlite3_reset(st);
+ 
+        return true;
+    }
+ 
+    // IARU regional allocations. Independent of country, so worth showing even
+    // when the privilege table is empty.
+    st = db->stFreqIaru;
+    sqlite3_reset(st);
+    sqlite3_clear_bindings(st);
+    sqlite3_bind_int64(st, 1, freqHz);
+ 
+    while (sqlite3_step(st) == SQLITE_ROW && out->nIaru < HAMMY_FREQ_IARU_MAX) {
+        hammy_freq_iaru_t* r = &out->iaru[out->nIaru++];
+ 
+        r->region = sqlite3_column_int(st, 0);
+        r->lowHz = sqlite3_column_int64(st, 1);
+        r->highHz = sqlite3_column_int64(st, 2);
+        copy_text(st, 3, r->modes, sizeof(r->modes));
+    }
+ 
+    sqlite3_reset(st);
+ 
+    // Sitting exactly on a segment boundary is worth flagging: a signal of any
+    // width centred there straddles both sides.
+    st = db->stFreqSegEdge;
+    sqlite3_reset(st);
+    sqlite3_clear_bindings(st);
+    sqlite3_bind_int64(st, 1, freqHz);
+    sqlite3_bind_text(st, 2, out->country, -1, SQLITE_TRANSIENT);
+    out->atSegmentEdge = step_bool(st);
+ 
+    return true;
+}
+ 
+size_t hammy_refdb_countries(hammy_refdb_t* db,
+                             char out[][HAMMY_COUNTRY_MAX], size_t cap) {
+    if (!db || !out || cap == 0) return 0;
+ 
+    size_t n = 0;
+ 
+    sqlite3_reset(db->stCountryList);
+ 
+    while (n < cap && sqlite3_step(db->stCountryList) == SQLITE_ROW) {
+        copy_text(db->stCountryList, 0, out[n++], HAMMY_COUNTRY_MAX);
+    }
+ 
+    sqlite3_reset(db->stCountryList);
+ 
+    return n;
 }

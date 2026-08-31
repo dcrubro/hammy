@@ -3,7 +3,6 @@
 
 
 
-
 #define DISCORD_APPLICATION_GATEWAY_PRESENCE (1 << 12)
 #define DISCORD_APPLICATION_GATEWAY_PRESENCE_LIMITED (1 << 13)
 #define DISCORD_APPLICATION_GATEWAY_GUILD_MEMBERS (1 << 14)
@@ -12,6 +11,50 @@
 #define DISCORD_APPLICATION_EMBEDDED (1 << 17)
 #define DISCORD_APPLICATION_GATEWAY_MESSAGE_CONTENT (1 << 18)
 #define DISCORD_APPLICATION_GATEWAY_MESSAGE_CONTENT_LIMITED (1 << 19)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -36,6 +79,63 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #include <inttypes.h>
 #include <stdbool.h>
 #include "carray.h"
@@ -44,6 +144,15 @@
 #include "concord-error.h"
 #define CONCORD_OPTIONAL (1 << 0ull)
 #define CONCORD_NO_JSON  (1 << 1ull)
+
+
+
+
+
+
+
+
+
 
 
 
@@ -80,10 +189,159 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #define DISCORD_SYSTEM_SUPPRESS_JOIN_NOTIFICATIONS (1 << 0)
 #define DISCORD_SYSTEM_SUPPRESS_PREMIUM_NOTIFICATIONS (1 << 1)
 #define DISCORD_SYSTEM_SUPPRESS_GUILD_REMINDER_NOTIFICATIONS (1 << 2)
 #define DISCORD_SYSTEM_SUPPRESS_JOIN_NOTIFICATION_REPLIES (1 << 3)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -133,6 +391,30 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #define DISCORD_USER_NONE (0)
 #define DISCORD_USER_STAFF (1 << 0)
 #define DISCORD_USER_PARTNER (1 << 1)
@@ -152,9 +434,34 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 #define DISCORD_VOICE_MICROPHONE (1 << 0)
 #define DISCORD_VOICE_SOUNDSHARE (1 << 1)
 #define DISCORD_VOICE_PRIORITY (1 << 2)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -795,23 +1102,170 @@
  #define  REFLECTC_DEFINED__discord_edit_webhook_message
 
  #define  REFLECTC_DEFINED__discord_delete_webhook_message
+
+
 enum discord_application_command_types { DISCORD_APPLICATION_CHAT_INPUT = 1, DISCORD_APPLICATION_USER = 2, DISCORD_APPLICATION_MESSAGE = 3, __discord_application_command_types_MAX__ };
 enum discord_application_command_option_types { DISCORD_APPLICATION_OPTION_SUB_COMMAND = 1, DISCORD_APPLICATION_OPTION_SUB_COMMAND_GROUP = 2, DISCORD_APPLICATION_OPTION_STRING = 3, DISCORD_APPLICATION_OPTION_INTEGER = 4, DISCORD_APPLICATION_OPTION_BOOLEAN = 5, DISCORD_APPLICATION_OPTION_USER = 6, DISCORD_APPLICATION_OPTION_CHANNEL = 7, DISCORD_APPLICATION_OPTION_ROLE = 8, DISCORD_APPLICATION_OPTION_MENTIONABLE = 9, DISCORD_APPLICATION_OPTION_NUMBER = 10, DISCORD_APPLICATION_OPTION_ATTACHMENT = 11, __discord_application_command_option_types_MAX__ };
 enum discord_application_command_permission_types { DISCORD_APPLICATION_PERMISSION_ROLE = 1, DISCORD_APPLICATION_PERMISSION_USER = 2, DISCORD_APPLICATION_PERMISSION_CHANNEL = 3, __discord_application_command_permission_types_MAX__ };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 enum discord_audit_log_events { DISCORD_AUDIT_LOG_GUILD_UPDATE = 1, DISCORD_AUDIT_LOG_CHANNEL_CREATE = 10, DISCORD_AUDIT_LOG_CHANNEL_UPDATE = 11, DISCORD_AUDIT_LOG_CHANNEL_DELETE = 12, DISCORD_AUDIT_LOG_CHANNEL_OVERWRITE_CREATE = 13, DISCORD_AUDIT_LOG_CHANNEL_OVERWRITE_UPDATE = 14, DISCORD_AUDIT_LOG_CHANNEL_OVERWRITE_DELETE = 15, DISCORD_AUDIT_LOG_MEMBER_KICK = 20, DISCORD_AUDIT_LOG_MEMBER_PRUNE = 21, DISCORD_AUDIT_LOG_MEMBER_BAN_ADD = 22, DISCORD_AUDIT_LOG_MEMBER_BAN_REMOVE = 23, DISCORD_AUDIT_LOG_MEMBER_UPDATE = 24, DISCORD_AUDIT_LOG_MEMBER_ROLE_UPDATE = 25, DISCORD_AUDIT_LOG_MEMBER_MOVE = 26, DISCORD_AUDIT_LOG_MEMBER_DISCONNECT = 27, DISCORD_AUDIT_LOG_BOT_ADD = 28, DISCORD_AUDIT_LOG_ROLE_CREATE = 30, DISCORD_AUDIT_LOG_ROLE_UPDATE = 31, DISCORD_AUDIT_LOG_ROLE_DELETE = 32, DISCORD_AUDIT_LOG_INVITE_CREATE = 40, DISCORD_AUDIT_LOG_INVITE_UPDATE = 41, DISCORD_AUDIT_LOG_INVITE_DELETE = 42, DISCORD_AUDIT_LOG_WEBHOOK_CREATE = 50, DISCORD_AUDIT_LOG_WEBHOOK_UPDATE = 51, DISCORD_AUDIT_LOG_WEBHOOK_DELETE = 52, DISCORD_AUDIT_LOG_EMOJI_CREATE = 60, DISCORD_AUDIT_LOG_EMOJI_UPDATE = 61, DISCORD_AUDIT_LOG_EMOJI_DELETE = 62, DISCORD_AUDIT_LOG_MESSAGE_DELETE = 72, DISCORD_AUDIT_LOG_MESSAGE_BULK_DELETE = 73, DISCORD_AUDIT_LOG_MESSAGE_PIN = 74, DISCORD_AUDIT_LOG_MESSAGE_UNPIN = 75, DISCORD_AUDIT_LOG_INTEGRATION_CREATE = 80, DISCORD_AUDIT_LOG_INTEGRATION_UPDATE = 81, DISCORD_AUDIT_LOG_INTEGRATION_DELETE = 82, DISCORD_AUDIT_LOG_STAGE_INSTANCE_CREATE = 83, DISCORD_AUDIT_LOG_STAGE_INSTANCE_UPDATE = 84, DISCORD_AUDIT_LOG_STAGE_INSTANCE_DELETE = 85, DISCORD_AUDIT_LOG_STICKER_CREATE = 90, DISCORD_AUDIT_LOG_STICKER_UPDATE = 91, DISCORD_AUDIT_LOG_STICKER_DELETE = 92, DISCORD_AUDIT_LOG_GUILD_SCHEDULED_EVENT_CREATE = 100, DISCORD_AUDIT_LOG_GUILD_SCHEDULED_EVENT_UPDATE = 101, DISCORD_AUDIT_LOG_GUILD_SCHEDULED_EVENT_DELETE = 102, DISCORD_AUDIT_LOG_THREAD_CREATE = 110, DISCORD_AUDIT_LOG_THREAD_UPDATE = 111, DISCORD_AUDIT_LOG_THREAD_DELETE = 112, DISCORD_AUDIT_LOG_APPLICATION_COMMAND_PERMISSION_UPDATE = 121, DISCORD_AUDIT_LOG_AUTO_MODERATION_RULE_CREATE = 140, DISCORD_AUDIT_LOG_AUTO_MODERATION_RULE_UPDATE = 141, DISCORD_AUDIT_LOG_AUTO_MODERATION_RULE_DELETE = 142, DISCORD_AUDIT_LOG_AUTO_MODERATION_BLOCK_MESSAGE = 143, __discord_audit_log_events_MAX__ };
+
+
+
+
+
+
+
+
 enum discord_auto_moderation_trigger_types { DISCORD_AUTO_MODERATION_KEYWORD = 1, DISCORD_AUTO_MODERATION_HARMFUL_LINK = 2, DISCORD_AUTO_MODERATION_SPAM = 3, DISCORD_AUTO_MODERATION_KEYWORD_PRESET = 4, __discord_auto_moderation_trigger_types_MAX__ };
 enum discord_auto_moderation_keyword_preset_types { DISCORD_AUTO_MODERATION_PROFANITY = 1, DISCORD_AUTO_MODERATION_SEXUAL_CONTENT = 2, DISCORD_AUTO_MODERATION_SLURS = 3, __discord_auto_moderation_keyword_preset_types_MAX__ };
 enum discord_auto_moderation_event_types { DISCORD_AUTO_MODERATION_MESSAGE_SEND = 1, __discord_auto_moderation_event_types_MAX__ };
 enum discord_auto_moderation_action_types { DISCORD_AUTO_MODERATION_ACTION_BLOCK_MESSAGE = 1, DISCORD_AUTO_MODERATION_ACTION_SEND_ALERT_MESSAGE = 2, DISCORD_AUTO_MODERATION_ACTION_TIMEOUT = 3, __discord_auto_moderation_action_types_MAX__ };
+
+
+
+
+
+
+
+
+
 enum discord_channel_types { DISCORD_CHANNEL_GUILD_TEXT = 0, DISCORD_CHANNEL_DM = 1, DISCORD_CHANNEL_GUILD_VOICE = 2, DISCORD_CHANNEL_GROUP_DM = 3, DISCORD_CHANNEL_GUILD_CATEGORY = 4, DISCORD_CHANNEL_GUILD_ANNOUNCEMENT = 5, DISCORD_CHANNEL_GUILD_NEWS = DISCORD_CHANNEL_GUILD_ANNOUNCEMENT, DISCORD_CHANNEL_GUILD_STORE = 6, DISCORD_CHANNEL_ANNOUNCEMENT_THREAD = 10, DISCORD_CHANNEL_GUILD_NEWS_THREAD = DISCORD_CHANNEL_ANNOUNCEMENT_THREAD, DISCORD_CHANNEL_GUILD_PUBLIC_THREAD = 11, DISCORD_CHANNEL_GUILD_PRIVATE_THREAD = 12, DISCORD_CHANNEL_GUILD_STAGE_VOICE = 13, DISCORD_CHANNEL_GUILD_DIRECTORY = 14, DISCORD_CHANNEL_GUILD_FORUM = 15, DISCORD_CHANNEL_GUILD_MEDIA = 16, __discord_channel_types_MAX__ };
 enum discord_video_quality_modes { DISCORD_VIDEO_QUALITY_AUTO = 1, DISCORD_VIDEO_QUALITY_FULL = 2, __discord_video_quality_modes_MAX__ };
 enum discord_sort_order_types { DISCORD_SORT_ORDER_LATEST_ACTIVITY = 0, DISCORD_SORT_ORDER_CREATION_DATE = 1, __discord_sort_order_types_MAX__ };
 enum discord_forum_layout_types { DISCORD_FORUM_LAYOUT_NOT_SET = 0, DISCORD_FORUM_LAYOUT_LIST_VIEW = 1, DISCORD_FORUM_LAYOUT_GALLERY_VIEW = 1, __discord_forum_layout_types_MAX__ };
 enum discord_message_types { DISCORD_MESSAGE_DEFAULT = 0, DISCORD_MESSAGE_RECIPIENT_ADD = 1, DISCORD_MESSAGE_RECIPIENT_REMOVE = 2, DISCORD_MESSAGE_CALL = 3, DISCORD_MESSAGE_CHANNEL_NAME_CHANGE = 4, DISCORD_MESSAGE_CHANNEL_ICON_CHANGE = 5, DISCORD_MESSAGE_CHANNEL_PINNED_MESSAGE = 6, DISCORD_MESSAGE_GUILD_MEMBER_JOIN = 7, DISCORD_MESSAGE_USER_PREMIUM_GUILD_SUBSCRIPTION = 8, DISCORD_MESSAGE_USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_1 = 9, DISCORD_MESSAGE_USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_2 = 10, DISCORD_MESSAGE_USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_3 = 11, DISCORD_MESSAGE_CHANNEL_FOLLOW_ADD = 12, DISCORD_MESSAGE_GUILD_DISCOVERY_DISQUALIFIED = 14, DISCORD_MESSAGE_GUILD_DISCOVERY_REQUALIFIED = 15, DISCORD_MESSAGE_GUILD_DISCOVERY_GRACE_PERIOD_INITIAL_WARNING = 16, DISCORD_MESSAGE_GUILD_DISCOVERY_GRACE_PERIOD_FINAL_WARNING = 17, DISCORD_MESSAGE_THREAD_CREATED = 18, DISCORD_MESSAGE_REPLY = 19, DISCORD_MESSAGE_CHAT_INPUT_COMMAND = 20, DISCORD_MESSAGE_THREAD_STARTER_MESSAGE = 21, DISCORD_MESSAGE_GUILD_INVITE_REMINDER = 22, DISCORD_MESSAGE_CONTEXT_MENU_COMMAND = 23, DISCORD_MESSAGE_AUTO_MODERATION_ACTION = 24, DISCORD_MESSAGE_ROLE_SUBSCRIPTION_PURCHASE = 25, DISCORD_MESSAGE_INTERACTION_PREMIUM_UPSELL = 26, DISCORD_MESSAGE_STAGE_START = 27, DISCORD_MESSAGE_STAGE_END = 28, DISCORD_MESSAGE_STAGE_SPEAKER = 29, DISCORD_MESSAGE_STAGE_TOPIC = 31, DISCORD_MESSAGE_GUILD_APPLICATION_PREMIUM_SUBSCRIPTION = 32, __discord_message_types_MAX__ };
 enum discord_message_activity_types { DISCORD_MESSAGE_ACTIVITY_JOIN = 1, DISCORD_MESSAGE_ACTIVITY_SPECTATE = 2, DISCORD_MESSAGE_ACTIVITY_LISTEN = 3, DISCORD_MESSAGE_ACTIVITY_JOIN_REQUEST = 5, __discord_message_activity_types_MAX__ };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 enum discord_gateway_close_opcodes { DISCORD_GATEWAY_CLOSE_REASON_UNKNOWN_ERROR = 4000, DISCORD_GATEWAY_CLOSE_REASON_UNKNOWN_OPCODE = 4001, DISCORD_GATEWAY_CLOSE_REASON_DECODE_ERROR = 4002, DISCORD_GATEWAY_CLOSE_REASON_NOT_AUTHENTICATED = 4003, DISCORD_GATEWAY_CLOSE_REASON_AUTHENTICATION_FAILED = 4004, DISCORD_GATEWAY_CLOSE_REASON_ALREADY_AUTHENTICATED = 4005, DISCORD_GATEWAY_CLOSE_REASON_INVALID_SEQUENCE = 4007, DISCORD_GATEWAY_CLOSE_REASON_RATE_LIMITED = 4008, DISCORD_GATEWAY_CLOSE_REASON_SESSION_TIMED_OUT = 4009, DISCORD_GATEWAY_CLOSE_REASON_INVALID_SHARD = 4010, DISCORD_GATEWAY_CLOSE_REASON_SHARDING_REQUIRED = 4011, DISCORD_GATEWAY_CLOSE_REASON_INVALID_API_VERSION = 4012, DISCORD_GATEWAY_CLOSE_REASON_INVALID_INTENTS = 4013, DISCORD_GATEWAY_CLOSE_REASON_DISALLOWED_INTENTS = 4014, DISCORD_GATEWAY_CLOSE_REASON_RECONNECT = 4900, __discord_gateway_close_opcodes_MAX__ };
 enum discord_gateway_opcodes { DISCORD_GATEWAY_DISPATCH = 0, DISCORD_GATEWAY_HEARTBEAT = 1, DISCORD_GATEWAY_IDENTIFY = 2, DISCORD_GATEWAY_PRESENCE_UPDATE = 3, DISCORD_GATEWAY_VOICE_STATE_UPDATE = 4, DISCORD_GATEWAY_RESUME = 6, DISCORD_GATEWAY_RECONNECT = 7, DISCORD_GATEWAY_REQUEST_GUILD_MEMBERS = 8, DISCORD_GATEWAY_INVALID_SESSION = 9, DISCORD_GATEWAY_HELLO = 10, DISCORD_GATEWAY_HEARTBEAT_ACK = 11, __discord_gateway_opcodes_MAX__ };
 enum discord_activity_types { DISCORD_ACTIVITY_GAME = 0, DISCORD_ACTIVITY_STREAMING = 1, DISCORD_ACTIVITY_LISTENING = 2, DISCORD_ACTIVITY_WATCHING = 3, DISCORD_ACTIVITY_CUSTOM = 4, DISCORD_ACTIVITY_COMPETING = 5, __discord_activity_types_MAX__ };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 enum discord_message_notification_level { DISCORD_MESSAGE_NOTIFICATION_ALL_MESSAGES = 0, DISCORD_MESSAGE_NOTIFICATION_ONLY_MESSAGES = 1, __discord_message_notification_level_MAX__ };
 enum discord_explicit_content_filter_level { DISCORD_EXPLICIT_CONTENT_DISABLED = 0, DISCORD_EXPLICIT_CONTENT_MEMBERS_WITHOUT_ROLES = 1, DISCORD_MESSAGE_NOTIFICATION_ALL_MEMBERS = 2, __discord_explicit_content_filter_level_MAX__ };
 enum discord_mfa_level { DISCORD_MFA_NONE = 0, DISCORD_MFA_ELEVATED = 1, __discord_mfa_level_MAX__ };
@@ -819,26 +1273,156 @@ enum discord_verification_level { DISCORD_VERIFICATION_NONE = 0, DISCORD_VERIFIC
 enum discord_guild_nsfw_level { DISCORD_GUILD_NSFW_DEFAULT = 0, DISCORD_GUILD_NSFW_EXPLICIT = 1, DISCORD_GUILD_NSFW_SAFE = 2, DISCORD_GUILD_NSFW_AGE_RESTRICTED = 3, __discord_guild_nsfw_level_MAX__ };
 enum discord_premium_tier { DISCORD_PREMIUM_TIER_NONE = 0, DISCORD_PREMIUM_TIER_1 = 1, DISCORD_PREMIUM_TIER_2 = 2, DISCORD_PREMIUM_TIER_3 = 3, __discord_premium_tier_MAX__ };
 enum discord_integration_expire_behaviors { DISCORD_INTEGRATION_REMOVE_ROLE = 0, DISCORD_INTEGRATION_KICK = 1, __discord_integration_expire_behaviors_MAX__ };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 enum discord_guild_scheduled_event_privacy_level { DISCORD_GUILD_SCHEDULED_EVENT_GUILD_ONLY = 2, __discord_guild_scheduled_event_privacy_level_MAX__ };
 enum discord_guild_scheduled_event_entity_types { DISCORD_GUILD_SCHEDULED_EVENT_ENTITY_STAGE_INSTANCE = 1, DISCORD_GUILD_SCHEDULED_EVENT_ENTITY_VOICE = 2, DISCORD_GUILD_SCHEDULED_EVENT_ENTITY_EXTERNAL = 3, __discord_guild_scheduled_event_entity_types_MAX__ };
 enum discord_guild_scheduled_event_status { DISCORD_GUILD_SCHEDULED_EVENT_SCHEDULED = 1, DISCORD_GUILD_SCHEDULED_EVENT_ACTIVE = 2, DISCORD_GUILD_SCHEDULED_EVENT_COMPLETED = 3, DISCORD_GUILD_SCHEDULED_EVENT_CANCELED = 4, __discord_guild_scheduled_event_status_MAX__ };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 enum discord_interaction_types { DISCORD_INTERACTION_PING = 1, DISCORD_INTERACTION_APPLICATION_COMMAND = 2, DISCORD_INTERACTION_MESSAGE_COMPONENT = 3, DISCORD_INTERACTION_APPLICATION_COMMAND_AUTOCOMPLETE = 4, DISCORD_INTERACTION_MODAL_SUBMIT = 5, __discord_interaction_types_MAX__ };
 enum discord_interaction_callback_types { DISCORD_INTERACTION_PONG = 1, DISCORD_INTERACTION_CHANNEL_MESSAGE_WITH_SOURCE = 4, DISCORD_INTERACTION_DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE = 5, DISCORD_INTERACTION_DEFERRED_UPDATE_MESSAGE = 6, DISCORD_INTERACTION_UPDATE_MESSAGE = 7, DISCORD_INTERACTION_APPLICATION_COMMAND_AUTOCOMPLETE_RESULT = 8, DISCORD_INTERACTION_MODAL = 9, __discord_interaction_callback_types_MAX__ };
+
+
+
+
+
+
+
+
+
 enum discord_invite_target_types { DISCORD_INVITE_TARGET_STREAM = 1, DISCORD_INVITE_TARGET_EMBEDDED_APPLICATION = 2, __discord_invite_target_types_MAX__ };
+
+
+
+
+
+
 enum discord_component_types { DISCORD_COMPONENT_ACTION_ROW = 1, DISCORD_COMPONENT_BUTTON = 2, DISCORD_COMPONENT_SELECT_MENU = 3, DISCORD_COMPONENT_TEXT_INPUT = 4, DISCORD_COMPONENT_USER_SELECT = 5, DISCORD_COMPONENT_ROLE_SELECT = 6, DISCORD_COMPONENT_MENTION_SELECT = 7, DISCORD_COMPONENT_CHANNEL_SELECT = 8, DISCORD_COMPONENT_SECTION = 9, DISCORD_COMPONENT_TEXT_DISPLAY = 10, DISCORD_COMPONENT_THUMBNAIL = 11, DISCORD_COMPONENT_MEDIA_GALLERY = 12, DISCORD_COMPONENT_FILE = 13, DISCORD_COMPONENT_SEPARATOR = 14, DISCORD_COMPONENT_CONTENT_INVENTORY_ENTRY = 16, DISCORD_COMPONENT_CONTAINER = 17, __discord_component_types_MAX__ };
 enum discord_component_styles { DISCORD_BUTTON_PRIMARY = 1, DISCORD_BUTTON_SECONDARY = 2, DISCORD_BUTTON_SUCCESS = 3, DISCORD_BUTTON_DANGER = 4, DISCORD_BUTTON_LINK = 5, DISCORD_TEXT_SHORT = 1, DISCORD_TEXT_PARAGRAPH = 2, __discord_component_styles_MAX__ };
 enum discord_component_spacing { DISCORD_COMPONENT_SPACING_SMALL = 1, DISCORD_COMPONENT_SPACING_LARGE = 2, __discord_component_spacing_MAX__ };
+
+
+
+
+
+
+
+
+
+
+
 enum discord_privacy_level { DISCORD_PRIVACY_PUBLIC = 1, DISCORD_PRIVACY_GUILD_ONLY = 2, __discord_privacy_level_MAX__ };
+
+
+
+
+
 enum discord_sticker_types { DISCORD_STICKER_STANDARD = 1, DISCORD_STICKER_GUILD = 2, __discord_sticker_types_MAX__ };
 enum discord_sticker_format_types { DISCORD_STICKER_FORMAT_PNG = 1, DISCORD_STICKER_FORMAT_APNG = 2, DISCORD_STICKER_FORMAT_LOTTIE = 3, __discord_sticker_format_types_MAX__ };
+
+
+
+
+
+
+
+
+
+
 enum discord_membership_state { DISCORD_MEMBERSHIP_INVITED = 1, DISCORD_MEMBERSHIP_ACCEPTED = 2, __discord_membership_state_MAX__ };
+
+
+
 enum discord_premium_types { DISCORD_PREMIUM_NONE = 0, DISCORD_PREMIUM_NITRO_CLASSIC = 1, DISCORD_PREMIUM_NITRO = 2, __discord_premium_types_MAX__ };
 enum discord_visibility_types { DISCORD_VISIBILITY_NONE = 0, DISCORD_VISIBILITY_EVERYONE = 1, __discord_visibility_types_MAX__ };
+
+
+
+
+
+
+
+
+
+
+
+
 enum discord_voice_close_opcodes { DISCORD_VOICE_CLOSE_REASON_UNKNOWN_OPCODE = 4001, DISCORD_VOICE_CLOSE_REASON_DECODE_ERROR = 4002, DISCORD_VOICE_CLOSE_REASON_NOT_AUTHENTICATED = 4003, DISCORD_VOICE_CLOSE_REASON_AUTHENTICATION_FAILED = 4004, DISCORD_VOICE_CLOSE_REASON_ALREADY_AUTHENTICATED = 4005, DISCORD_VOICE_CLOSE_REASON_INVALID_SESSION = 4006, DISCORD_VOICE_CLOSE_REASON_SESSION_TIMED_OUT = 4009, DISCORD_VOICE_CLOSE_REASON_SERVER_NOT_FOUND = 4011, DISCORD_VOICE_CLOSE_REASON_UNKNOWN_PROTOCOL = 4012, DISCORD_VOICE_CLOSE_REASON_DISCONNECTED = 4014, DISCORD_VOICE_CLOSE_REASON_SERVER_CRASH = 4015, DISCORD_VOICE_CLOSE_REASON_UNKNOWN_ENCRYPTION_MODE = 4016, __discord_voice_close_opcodes_MAX__ };
 enum discord_voice_opcodes { DISCORD_VOICE_IDENTIFY = 0, DISCORD_VOICE_SELECT_PROTOCOL = 1, DISCORD_VOICE_READY = 2, DISCORD_VOICE_HEARTBEAT = 3, DISCORD_VOICE_SESSION_DESCRIPTION = 4, DISCORD_VOICE_SPEAKING = 5, DISCORD_VOICE_HEARTBEAT_ACK = 6, DISCORD_VOICE_RESUME = 7, DISCORD_VOICE_HELLO = 8, DISCORD_VOICE_RESUMED = 9, DISCORD_VOICE_CLIENT_DISCONNECT = 13, DISCORD_VOICE_CODEC = 14, __discord_voice_opcodes_MAX__ };
 enum discord_webhook_types { DISCORD_WEBHOOK_INCOMING = 1, DISCORD_WEBHOOK_CHANNEL_FOLLOWER = 2, DISCORD_WEBHOOK_APPLICATION = 3, __discord_webhook_types_MAX__ };
+
+
+
+
+
+
+
+
+
+
 struct discord_application { _ _ u64snowflake _ id _; _ _ char * name _; _ _ char * icon _; _ _ char * description _; _ struct strings * rpc_origins _; _ _ bool _ bot_public _; _ _ bool _ bot_require_code_grant _; _ _ char * terms_of_service_url _; _ _ char * privacy_policy_url _; _ struct discord_user * owner _; _ _ char * summary _; _ _ char * verify_key _; _ struct discord_team * team _; _ _ u64snowflake _ guild_id _; _ _ u64snowflake _ primary_sku_id _; _ _ char * slug _; _ _ char * cover_image _; _ _ u64bitmask _ flags _; };
 struct discord_install_params { _ struct strings * scopes _; _ _ u64bitmask _ permissions _; };
+
+
+
 struct discord_application_command { _ _ u64snowflake _ id _; _ enum discord_application_command_types _ type _; _ _ u64snowflake _ application_id _; _ _ u64snowflake _ guild_id _; _ _ char * name _; _ _ char * description _; _ struct discord_application_command_options * options _; _ _ u64bitmask _ default_member_permissions _; _ _ bool _ dm_permission _; _ _ bool _ default_permission _; _ _ u64snowflake _ version _; };
 struct discord_application_commands { _ _ int _ size _; _ struct discord_application_command * array _; _ _ int _ realsize _; };
 struct discord_application_command_option { _ enum discord_application_command_option_types _ type _; _ _ char * name _; _ _ char * description _; _ _ bool _ required _; _ struct discord_application_command_option_choices * choices _; _ struct discord_application_command_options * options _; _ struct integers * channel_types _; _ _ char * min_value _; _ _ char * max_value _; _ _ bool _ autocomplete _; };
@@ -857,6 +1441,7 @@ struct discord_create_guild_application_command { _ _ char * name _; _ _ char * 
 struct discord_edit_guild_application_command { _ _ char * name _; _ _ char * description _; _ struct discord_application_command_options * options _; _ _ u64bitmask _ default_member_permissions _; _ _ bool _ default_permission _; };
 struct discord_bulk_overwrite_guild_application_command { _ _ u64snowflake _ id _; _ _ char * name _; _ struct strings * name_localizations _; _ _ char * description _; _ struct strings * description_localizations _; _ struct discord_application_command_options * options _; _ _ u64bitmask _ default_member_permissions _; _ _ bool _ dm_permission _; _ enum discord_application_command_types _ type _; };
 struct discord_bulk_overwrite_guild_application_commands { _ _ int _ size _; _ struct discord_bulk_overwrite_guild_application_command * array _; _ _ int _ realsize _; };
+
 struct discord_audit_log { _ struct discord_audit_log_entries * audit_log_entries _; _ struct discord_guild_scheduled_events * guild_scheduled_events _; _ struct discord_integrations * integrations _; _ struct discord_channels * threads _; _ struct discord_users * users _; _ struct discord_webhooks * webhooks _; };
 struct discord_audit_log_entry { _ _ u64snowflake _ target_id _; _ struct discord_audit_log_changes * changes _; _ _ u64snowflake _ user_id _; _ _ u64snowflake _ id _; _ enum discord_audit_log_events _ action_type _; _ struct discord_optional_audit_entry_infos * options _; _ _ char * reason _; };
 struct discord_audit_log_entries { _ _ int _ size _; _ struct discord_audit_log_entry * array _; _ _ int _ realsize _; };
@@ -865,6 +1450,10 @@ struct discord_optional_audit_entry_infos { _ _ int _ size _; _ struct discord_o
 struct discord_audit_log_change { _ _ json_char * new_value _; _ _ json_char * old_value _; _ _ char * key _; };
 struct discord_audit_log_changes { _ _ int _ size _; _ struct discord_audit_log_change * array _; _ _ int _ realsize _; };
 struct discord_get_guild_audit_log { _ _ u64snowflake _ user_id _; _ _ int _ action_type _; _ _ u64snowflake _ before _; _ _ int _ limit _; };
+
+
+
+
 struct discord_auto_moderation_trigger_metadata { _ struct strings * keyword_filter _; _ struct integers * presets _; };
 struct discord_auto_moderation_action { _ enum discord_auto_moderation_action_types _ type _; _ struct discord_auto_moderation_action_metadata * metadata _; };
 struct discord_auto_moderation_actions { _ _ int _ size _; _ struct discord_auto_moderation_action * array _; _ _ int _ realsize _; };
@@ -874,6 +1463,12 @@ struct discord_auto_moderation_rules { _ _ int _ size _; _ struct discord_auto_m
 struct discord_create_auto_moderation_rule { _ _ char * reason _; _ _ char * name _; _ enum discord_auto_moderation_event_types _ event_type _; _ enum discord_auto_moderation_trigger_types _ trigger_type _; _ struct discord_auto_moderation_actions * actions _; _ struct discord_auto_moderation_trigger_metadata * trigger_metadata _; _ _ bool _ enabled _; _ struct snowflakes * exempt_roles _; _ struct snowflakes * exempt_channels _; };
 struct discord_modify_auto_moderation_rule { _ _ char * reason _; _ _ char * name _; _ enum discord_auto_moderation_event_types _ event_type _; _ struct discord_auto_moderation_trigger_metadata * trigger_metadata _; _ struct discord_auto_moderation_actions * actions _; _ _ bool _ enabled _; _ struct snowflakes * exempt_roles _; _ struct snowflakes * exempt_channels _; };
 struct discord_delete_auto_moderation_rule { _ _ char * reason _; };
+
+
+
+
+
+
 struct discord_channel { _ _ u64snowflake _ id _; _ enum discord_channel_types _ type _; _ _ u64snowflake _ guild_id _; _ _ int _ position _; _ struct discord_overwrites * permission_overwrites _; _ _ char * name _; _ _ char * topic _; _ _ bool _ nsfw _; _ _ u64snowflake _ last_message_id _; _ _ int _ bitrate _; _ _ int _ user_limit _; _ _ int _ rate_limit_per_user _; _ struct discord_users * recipients _; _ _ char * icon _; _ _ u64snowflake _ owner_id _; _ _ u64snowflake _ application_id _; _ _ bool _ managed _; _ _ u64snowflake _ parent_id _; _ _ u64unix_ms _ last_pin_timestamp _; _ _ char * rtc_region _; _ _ int _ voice_quality_mode _; _ _ int _ message_count _; _ _ int _ member_count _; _ struct discord_thread_metadata * thread_metadata _; _ struct discord_thread_member * member _; _ _ int _ default_auto_archive_duration _; _ _ u64bitmask _ permissions _; _ _ u64bitmask _ flags _; _ _ int _ total_message_sent _; _ struct discord_thread_tags * available_tags _; _ struct snowflakes * applied_tags _; _ struct discord_thread_default_reaction * default_reaction_emoji _; _ _ int _ default_thread_rate_limit_per_user _; _ enum discord_sort_order_types _ default_sort_order _; _ enum discord_forum_layout_types _ default_forum_layout _; };
 struct discord_channels { _ _ int _ size _; _ struct discord_channel * array _; _ _ int _ realsize _; };
 struct discord_message_activity { _ enum discord_message_activity_types _ type _; _ _ char * party_id _; };
@@ -936,6 +1531,9 @@ struct discord_emojis { _ _ int _ size _; _ struct discord_emoji * array _; _ _ 
 struct discord_create_guild_emoji { _ _ char * reason _; _ _ char * name _; _ _ char * image _; _ struct snowflakes * roles _; };
 struct discord_modify_guild_emoji { _ _ char * reason _; _ _ char * name _; _ _ char * image _; _ struct snowflakes * roles _; };
 struct discord_delete_guild_emoji { _ _ char * reason _; };
+
+
+
 struct discord_activity { _ _ char * name _; _ enum discord_activity_types _ type _; _ _ char * url _; _ _ u64unix_ms _ created_at _; _ struct discord_activity_timestamps * timestamps _; _ _ u64snowflake _ application_id _; _ _ char * details _; _ _ char * state _; _ struct discord_activity_emoji * emoji _; _ struct discord_activity_party * party _; _ struct discord_activity_assets * assets _; _ struct discord_activity_secrets * secrets _; _ _ bool _ instance _; _ _ u64bitmask _ flags _; _ struct discord_activity_buttons * buttons _; };
 struct discord_activities { _ _ int _ size _; _ struct discord_activity * array _; _ _ int _ realsize _; };
 struct discord_activity_timestamps { _ _ u64unix_ms _ start _; _ _ u64unix_ms _ end _; };
@@ -984,6 +1582,13 @@ struct discord_typing_start { _ _ u64snowflake _ channel_id _; _ _ u64snowflake 
 struct discord_voice_server_update { _ _ char * token _; _ _ u64snowflake _ guild_id _; _ _ char * endpoint _; };
 struct discord_webhooks_update { _ _ u64snowflake _ guild_id _; _ _ u64snowflake _ channel_id _; };
 struct discord_session_start_limit { _ _ int _ total _; _ _ int _ remaining _; _ _ int _ reset_after _; _ _ int _ max_concurrency _; };
+
+
+
+
+
+
+
 struct discord_guild { _ _ u64snowflake _ id _; _ _ char * name _; _ _ char * icon _; _ _ char * icon_hash _; _ _ char * splash _; _ _ char * discovery_splash _; _ _ bool _ owner _; _ _ u64snowflake _ owner_id _; _ _ u64bitmask _ permissions _; _ _ u64snowflake _ afk_channel_id _; _ _ int _ afk_timeout _; _ _ bool _ widget_enabled _; _ _ u64snowflake _ widget_channel_id _; _ enum discord_verification_level _ verification_level _; _ enum discord_message_notification_level _ default_message_notifications _; _ enum discord_explicit_content_filter_level _ explicit_content_filter _; _ struct discord_roles * roles _; _ struct discord_emojis * emojis _; _ struct strings * features _; _ enum discord_mfa_level _ mfa_level _; _ _ u64snowflake _ application_id _; _ _ u64snowflake _ system_channel_id _; _ _ u64bitmask _ system_channel_flags _; _ _ u64snowflake _ rules_channel_id _; _ _ u64unix_ms _ joined_at _; _ _ bool _ large _; _ _ bool _ unavailable _; _ _ int _ member_count _; _ struct discord_voice_states * voice_states _; _ struct discord_guild_members * members _; _ struct discord_channels * channels _; _ struct discord_channels * threads _; _ struct discord_presence_updates * presences _; _ _ int _ max_presences _; _ _ int _ max_members _; _ _ char * vanity_url_code _; _ _ char * description _; _ _ char * banner _; _ enum discord_premium_tier _ premium_tier _; _ _ int _ premium_subscription_count _; _ _ char * preferred_locale _; _ _ u64snowflake _ public_updates_channel_id _; _ _ int _ max_video_channel_users _; _ _ int _ approximate_member_count _; _ _ int _ approximate_presence_count _; _ struct discord_welcome_screen * welcome_screen _; _ enum discord_guild_nsfw_level _ nsfw_level _; _ struct discord_stage_instances * stage_instances _; _ struct discord_stickers * stickers _; _ struct discord_guild_scheduled_events * guild_scheduled_events _; _ _ bool _ premium_progress_bar_enabled _; };
 struct discord_guilds { _ _ int _ size _; _ struct discord_guild * array _; _ _ int _ realsize _; };
 struct discord_guild_preview { _ _ u64snowflake _ id _; _ _ char * name _; _ _ char * icon _; _ _ char * splash _; _ _ char * discovery_splash _; _ struct discord_emojis * emojis _; _ struct strings * features _; _ _ int _ approximate_member_count _; _ _ int _ approximate_presence_count _; _ _ char * description _; _ struct discord_stickers * stickers _; };
@@ -1030,6 +1635,9 @@ struct discord_get_guild_widget_image { _ _ char * style _; };
 struct discord_modify_guild_welcome_screen { _ _ char * reason _; _ _ bool _ enabled _; _ struct discord_welcome_screen_channels * welcome_channels _; _ _ char * description _; };
 struct discord_modify_current_user_voice_state { _ _ u64snowflake _ channel_id _; _ _ bool _ suppress _; _ _ u64unix_ms _ request_to_speak_timestamp _; };
 struct discord_modify_user_voice_state { _ _ u64snowflake _ channel_id _; _ _ bool _ suppress _; };
+
+
+
 struct discord_guild_scheduled_event { _ _ u64snowflake _ id _; _ _ u64snowflake _ guild_id _; _ _ u64snowflake _ channel_id _; _ _ u64snowflake _ creator_id _; _ _ char * name _; _ _ char * description _; _ _ u64unix_ms _ scheduled_start_time _; _ _ u64unix_ms _ scheduled_end_time _; _ enum discord_guild_scheduled_event_privacy_level _ privacy_level _; _ enum discord_guild_scheduled_event_status _ status _; _ enum discord_guild_scheduled_event_entity_types _ entity_type _; _ _ u64snowflake _ entity_id _; _ struct discord_guild_scheduled_event_entity_metadata * entity_metadata _; _ struct discord_user * creator _; _ _ int _ user_count _; _ _ char * image _; };
 struct discord_guild_scheduled_event_entity_metadata { _ _ char * location _; };
 struct discord_guild_scheduled_events { _ _ int _ size _; _ struct discord_guild_scheduled_event * array _; _ _ int _ realsize _; };
@@ -1045,6 +1653,8 @@ struct discord_guild_templates { _ _ int _ size _; _ struct discord_guild_templa
 struct discord_create_guild_from_guild_template { _ _ char * name _; _ _ char * icon _; };
 struct discord_create_guild_template { _ _ char * name _; _ _ char * description _; };
 struct discord_modify_guild_template { _ _ char * name _; _ _ char * description _; };
+
+
 struct discord_interaction { _ _ u64snowflake _ id _; _ _ u64snowflake _ application_id _; _ enum discord_interaction_types _ type _; _ struct discord_interaction_data * data _; _ _ u64snowflake _ guild_id _; _ _ u64snowflake _ channel_id _; _ struct discord_guild_member * member _; _ struct discord_user * user _; _ _ char * token _; _ _ int _ version _; _ struct discord_message * message _; _ _ char * locale _; _ _ char * guild_locale _; };
 struct discord_interaction_data { _ _ u64snowflake _ id _; _ _ char * name _; _ enum discord_application_command_types _ type _; _ struct discord_resolved_data * resolved _; _ struct discord_application_command_interaction_data_options * options _; _ _ char * custom_id _; _ enum discord_component_types _ component_type _; _ struct strings * values _; _ _ u64snowflake _ target_id _; _ struct discord_components * components _; };
 struct discord_resolved_data { _ _ json_char * users _; _ _ json_char * members _; _ _ json_char * roles _; _ _ json_char * channels _; _ _ json_char * messages _; _ _ json_char * attachments _; };
@@ -1054,12 +1664,16 @@ struct discord_interaction_callback_data { _ struct discord_components * compone
 struct discord_edit_original_interaction_response { _ _ u64snowflake _ thread_id _; _ _ char * content _; _ struct discord_embeds * embeds _; _ struct discord_allowed_mention * allowed_mentions _; _ struct discord_components * components _; _ struct discord_attachments * attachments _; };
 struct discord_create_followup_message { _ _ bool _ wait _; _ _ u64snowflake _ thread_id _; _ _ char * avatar_url _; _ _ bool _ tts _; _ struct discord_embeds * embeds _; _ struct discord_allowed_mention * allowed_mentions _; _ struct discord_components * components _; _ struct discord_attachments * attachments _; _ _ u64bitmask _ flags _; };
 struct discord_edit_followup_message { _ _ u64snowflake _ thread_id _; _ _ char * content _; _ struct discord_embeds * embeds _; _ struct discord_allowed_mention * allowed_mentions _; _ struct discord_components * components _; _ struct discord_attachments * attachments _; };
+
 struct discord_invite { _ _ char * code _; _ struct discord_guild * guild _; _ struct discord_channel * channel _; _ struct discord_user * inviter _; _ enum discord_invite_target_types _ target_type _; _ struct discord_user * target_user _; _ struct discord_application * target_application _; _ _ int _ approximate_presence_count _; _ _ int _ approximate_member_count _; _ _ u64unix_ms _ expires_at _; _ struct discord_invite_stage_instance * stage_instance _; _ struct discord_guild_scheduled_event * guild_scheduled_event _; };
 struct discord_invites { _ _ int _ size _; _ struct discord_invite * array _; _ _ int _ realsize _; };
 struct discord_invite_metadata { _ _ int _ uses _; _ _ int _ max_uses _; _ _ int _ max_age _; _ _ bool _ temporary _; _ _ u64unix_ms _ created_at _; };
 struct discord_invite_stage_instance { _ struct discord_guild_members * members _; _ _ int _ participant_count _; _ _ int _ speaker_count _; _ _ char * topic _; };
 struct discord_get_invite { _ _ bool _ with_counts _; _ _ bool _ with_expiration _; _ _ u64snowflake _ guild_scheduled_event_id _; };
 struct discord_delete_invite { _ _ char * reason _; };
+
+
+
 struct discord_component { _ _ u64snowflake _ id _; _ enum discord_component_types _ type _; _ _ char * custom_id _; _ _ u64snowflake _ sku_id _; _ enum discord_component_styles _ style _; _ _ char * label _; _ struct discord_emoji * emoji _; _ _ char * url _; _ struct discord_select_options * options _; _ _ char * placeholder _; _ _ int _ min_values _; _ _ int _ max_values _; _ struct discord_components * components _; _ _ int _ min_length _; _ _ int _ max_length _; _ _ bool _ required _; _ _ char * value _; };
 struct discord_components { _ _ int _ size _; _ struct discord_component * array _; _ _ int _ realsize _; };
 struct discord_select_option { _ _ char * label _; _ _ char * value _; _ _ char * description _; _ struct discord_emoji * emoji _; _ _ bool _ Default _; };
@@ -1071,11 +1685,14 @@ struct discord_auth_response { _ struct discord_application * application _; _ s
 struct discord_role { _ _ u64snowflake _ id _; _ _ char * name _; _ _ int _ color _; _ _ bool _ hoist _; _ _ char * icon _; _ _ char * unicode_emoji _; _ _ int _ position _; _ _ u64bitmask _ permissions _; _ _ bool _ managed _; _ _ bool _ mentionable _; _ struct discord_role_tag * tags _; };
 struct discord_roles { _ _ int _ size _; _ struct discord_role * array _; _ _ int _ realsize _; };
 struct discord_role_tag { _ _ u64snowflake _ bot_id _; _ _ u64snowflake _ integration_id _; _ _ bool _ premium_subscribe _; };
+
 struct discord_stage_instance { _ _ u64snowflake _ id _; _ _ u64snowflake _ guild_id _; _ _ u64snowflake _ channel_id _; _ _ char * topic _; _ enum discord_privacy_level _ privacy_level _; _ _ bool _ discoverable_disabled _; };
 struct discord_stage_instances { _ _ int _ size _; _ struct discord_stage_instance * array _; _ _ int _ realsize _; };
 struct discord_create_stage_instance { _ _ char * reason _; _ _ u64snowflake _ channel_id _; _ _ char * topic _; _ enum discord_privacy_level _ privacy_level _; };
 struct discord_modify_stage_instance { _ _ char * reason _; _ _ char * topic _; _ enum discord_privacy_level _ privacy_level _; };
 struct discord_delete_stage_instance { _ _ char * reason _; };
+
+
 struct discord_sticker { _ _ u64snowflake _ id _; _ _ u64snowflake _ pack_id _; _ _ char * name _; _ _ char * description _; _ _ char * tags _; _ enum discord_sticker_types _ type _; _ enum discord_sticker_format_types _ format_type _; _ _ bool _ available _; _ _ u64snowflake _ guild_id _; _ struct discord_user * user _; _ _ int _ sort_value _; };
 struct discord_stickers { _ _ int _ size _; _ struct discord_sticker * array _; _ _ int _ realsize _; };
 struct discord_sticker_item { _ _ u64snowflake _ id _; _ _ char * name _; _ enum discord_sticker_format_types _ format_type _; };
@@ -1086,9 +1703,12 @@ struct discord_list_nitro_sticker_packs { _ struct discord_sticker_packs * stick
 struct discord_create_guild_sticker { _ _ char * reason _; _ _ char * name _; _ _ char * description _; _ _ char * tags _; _ struct discord_attachment * file _; };
 struct discord_modify_guild_sticker { _ _ char * reason _; _ _ char * name _; _ _ char * description _; _ _ char * tags _; };
 struct discord_delete_guild_sticker { _ _ char * reason _; };
+
 struct discord_team { _ _ char * icon _; _ _ u64snowflake _ id _; _ struct discord_team_members * members _; _ _ char * name _; _ _ u64snowflake _ owner_user_id _; };
 struct discord_team_member { _ enum discord_membership_state _ membership_state _; _ struct bitmasks * permissions _; _ _ u64snowflake _ team_id _; _ struct discord_user * user _; };
 struct discord_team_members { _ _ int _ size _; _ struct discord_team_member * array _; _ _ int _ realsize _; };
+
+
 struct discord_user { _ _ u64snowflake _ id _; _ _ char * username _; _ _ char * discriminator _; _ _ char * avatar _; _ _ bool _ bot _; _ _ bool _ System _; _ _ bool _ mfa_enabled _; _ _ char * banner _; _ _ int _ accent_color _; _ _ char * locale _; _ _ bool _ verified _; _ _ char * email _; _ _ u64bitmask _ flags _; _ enum discord_premium_types _ premium_type _; _ _ u64bitmask _ public_flags _; };
 struct discord_users { _ _ int _ size _; _ struct discord_user * array _; _ _ int _ realsize _; };
 struct discord_connection { _ _ u64snowflake _ id _; _ _ char * name _; _ _ char * type _; _ _ bool _ revoked _; _ struct discord_integrations * integrations _; _ _ bool _ verified _; _ _ bool _ friend_sync _; _ _ bool _ show_activity _; _ enum discord_visibility_types _ visibility _; };
@@ -1101,6 +1721,9 @@ struct discord_voice_state { _ _ u64snowflake _ guild_id _; _ _ u64snowflake _ c
 struct discord_voice_states { _ _ int _ size _; _ struct discord_voice_state * array _; _ _ int _ realsize _; };
 struct discord_voice_region { _ _ char * id _; _ _ char * name _; _ _ bool _ optimal _; _ _ bool _ deprecated _; _ _ bool _ custom _; };
 struct discord_voice_regions { _ _ int _ size _; _ struct discord_voice_region * array _; _ _ int _ realsize _; };
+
+
+
 struct discord_webhook { _ _ u64snowflake _ id _; _ enum discord_webhook_types _ type _; _ _ u64snowflake _ guild_id _; _ _ u64snowflake _ channel_id _; _ struct discord_user * user _; _ _ char * name _; _ _ char * token _; _ _ u64snowflake _ application_id _; _ struct discord_channel * source_channel _; _ _ char * url _; };
 struct discord_webhooks { _ _ int _ size _; _ struct discord_webhook * array _; _ _ int _ realsize _; };
 struct discord_create_webhook { _ _ char * reason _; _ _ char * name _; _ _ char * avatar _; };
@@ -1113,6 +1736,9 @@ struct discord_edit_webhook_message { _ _ u64snowflake _ thread_id _; _ _ char *
 struct discord_delete_webhook_message { _ _ u64snowflake _ thread_id _; };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_application__id), REFLECTC_NS_UPPER(_LOOKUP__discord_application__name), REFLECTC_NS_UPPER(_LOOKUP__discord_application__icon), REFLECTC_NS_UPPER(_LOOKUP__discord_application__description), REFLECTC_NS_UPPER(_LOOKUP__discord_application__rpc_origins), REFLECTC_NS_UPPER(_LOOKUP__discord_application__bot_public), REFLECTC_NS_UPPER(_LOOKUP__discord_application__bot_require_code_grant), REFLECTC_NS_UPPER(_LOOKUP__discord_application__terms_of_service_url), REFLECTC_NS_UPPER(_LOOKUP__discord_application__privacy_policy_url), REFLECTC_NS_UPPER(_LOOKUP__discord_application__owner), REFLECTC_NS_UPPER(_LOOKUP__discord_application__summary), REFLECTC_NS_UPPER(_LOOKUP__discord_application__verify_key), REFLECTC_NS_UPPER(_LOOKUP__discord_application__team), REFLECTC_NS_UPPER(_LOOKUP__discord_application__guild_id), REFLECTC_NS_UPPER(_LOOKUP__discord_application__primary_sku_id), REFLECTC_NS_UPPER(_LOOKUP__discord_application__slug), REFLECTC_NS_UPPER(_LOOKUP__discord_application__cover_image), REFLECTC_NS_UPPER(_LOOKUP__discord_application__flags), REFLECTC_NS_UPPER(_LOOKUP__discord_application_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_install_params__scopes), REFLECTC_NS_UPPER(_LOOKUP__discord_install_params__permissions), REFLECTC_NS_UPPER(_LOOKUP__discord_install_params_MAX) };
+
+
+
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_application_command__id), REFLECTC_NS_UPPER(_LOOKUP__discord_application_command__type), REFLECTC_NS_UPPER(_LOOKUP__discord_application_command__application_id), REFLECTC_NS_UPPER(_LOOKUP__discord_application_command__guild_id), REFLECTC_NS_UPPER(_LOOKUP__discord_application_command__name), REFLECTC_NS_UPPER(_LOOKUP__discord_application_command__description), REFLECTC_NS_UPPER(_LOOKUP__discord_application_command__options), REFLECTC_NS_UPPER(_LOOKUP__discord_application_command__default_member_permissions), REFLECTC_NS_UPPER(_LOOKUP__discord_application_command__dm_permission), REFLECTC_NS_UPPER(_LOOKUP__discord_application_command__default_permission), REFLECTC_NS_UPPER(_LOOKUP__discord_application_command__version), REFLECTC_NS_UPPER(_LOOKUP__discord_application_command_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_application_commands__size), REFLECTC_NS_UPPER(_LOOKUP__discord_application_commands__array), REFLECTC_NS_UPPER(_LOOKUP__discord_application_commands__realsize), REFLECTC_NS_UPPER(_LOOKUP__discord_application_commands_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_application_command_option__type), REFLECTC_NS_UPPER(_LOOKUP__discord_application_command_option__name), REFLECTC_NS_UPPER(_LOOKUP__discord_application_command_option__description), REFLECTC_NS_UPPER(_LOOKUP__discord_application_command_option__required), REFLECTC_NS_UPPER(_LOOKUP__discord_application_command_option__choices), REFLECTC_NS_UPPER(_LOOKUP__discord_application_command_option__options), REFLECTC_NS_UPPER(_LOOKUP__discord_application_command_option__channel_types), REFLECTC_NS_UPPER(_LOOKUP__discord_application_command_option__min_value), REFLECTC_NS_UPPER(_LOOKUP__discord_application_command_option__max_value), REFLECTC_NS_UPPER(_LOOKUP__discord_application_command_option__autocomplete), REFLECTC_NS_UPPER(_LOOKUP__discord_application_command_option_MAX) };
@@ -1131,6 +1757,7 @@ enum { REFLECTC_NS_UPPER(_LOOKUP__discord_create_guild_application_command__name
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_edit_guild_application_command__name), REFLECTC_NS_UPPER(_LOOKUP__discord_edit_guild_application_command__description), REFLECTC_NS_UPPER(_LOOKUP__discord_edit_guild_application_command__options), REFLECTC_NS_UPPER(_LOOKUP__discord_edit_guild_application_command__default_member_permissions), REFLECTC_NS_UPPER(_LOOKUP__discord_edit_guild_application_command__default_permission), REFLECTC_NS_UPPER(_LOOKUP__discord_edit_guild_application_command_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_bulk_overwrite_guild_application_command__id), REFLECTC_NS_UPPER(_LOOKUP__discord_bulk_overwrite_guild_application_command__name), REFLECTC_NS_UPPER(_LOOKUP__discord_bulk_overwrite_guild_application_command__name_localizations), REFLECTC_NS_UPPER(_LOOKUP__discord_bulk_overwrite_guild_application_command__description), REFLECTC_NS_UPPER(_LOOKUP__discord_bulk_overwrite_guild_application_command__description_localizations), REFLECTC_NS_UPPER(_LOOKUP__discord_bulk_overwrite_guild_application_command__options), REFLECTC_NS_UPPER(_LOOKUP__discord_bulk_overwrite_guild_application_command__default_member_permissions), REFLECTC_NS_UPPER(_LOOKUP__discord_bulk_overwrite_guild_application_command__dm_permission), REFLECTC_NS_UPPER(_LOOKUP__discord_bulk_overwrite_guild_application_command__type), REFLECTC_NS_UPPER(_LOOKUP__discord_bulk_overwrite_guild_application_command_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_bulk_overwrite_guild_application_commands__size), REFLECTC_NS_UPPER(_LOOKUP__discord_bulk_overwrite_guild_application_commands__array), REFLECTC_NS_UPPER(_LOOKUP__discord_bulk_overwrite_guild_application_commands__realsize), REFLECTC_NS_UPPER(_LOOKUP__discord_bulk_overwrite_guild_application_commands_MAX) };
+
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_audit_log__audit_log_entries), REFLECTC_NS_UPPER(_LOOKUP__discord_audit_log__guild_scheduled_events), REFLECTC_NS_UPPER(_LOOKUP__discord_audit_log__integrations), REFLECTC_NS_UPPER(_LOOKUP__discord_audit_log__threads), REFLECTC_NS_UPPER(_LOOKUP__discord_audit_log__users), REFLECTC_NS_UPPER(_LOOKUP__discord_audit_log__webhooks), REFLECTC_NS_UPPER(_LOOKUP__discord_audit_log_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_audit_log_entry__target_id), REFLECTC_NS_UPPER(_LOOKUP__discord_audit_log_entry__changes), REFLECTC_NS_UPPER(_LOOKUP__discord_audit_log_entry__user_id), REFLECTC_NS_UPPER(_LOOKUP__discord_audit_log_entry__id), REFLECTC_NS_UPPER(_LOOKUP__discord_audit_log_entry__action_type), REFLECTC_NS_UPPER(_LOOKUP__discord_audit_log_entry__options), REFLECTC_NS_UPPER(_LOOKUP__discord_audit_log_entry__reason), REFLECTC_NS_UPPER(_LOOKUP__discord_audit_log_entry_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_audit_log_entries__size), REFLECTC_NS_UPPER(_LOOKUP__discord_audit_log_entries__array), REFLECTC_NS_UPPER(_LOOKUP__discord_audit_log_entries__realsize), REFLECTC_NS_UPPER(_LOOKUP__discord_audit_log_entries_MAX) };
@@ -1139,6 +1766,10 @@ enum { REFLECTC_NS_UPPER(_LOOKUP__discord_optional_audit_entry_infos__size), REF
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_audit_log_change__new_value), REFLECTC_NS_UPPER(_LOOKUP__discord_audit_log_change__old_value), REFLECTC_NS_UPPER(_LOOKUP__discord_audit_log_change__key), REFLECTC_NS_UPPER(_LOOKUP__discord_audit_log_change_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_audit_log_changes__size), REFLECTC_NS_UPPER(_LOOKUP__discord_audit_log_changes__array), REFLECTC_NS_UPPER(_LOOKUP__discord_audit_log_changes__realsize), REFLECTC_NS_UPPER(_LOOKUP__discord_audit_log_changes_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_get_guild_audit_log__user_id), REFLECTC_NS_UPPER(_LOOKUP__discord_get_guild_audit_log__action_type), REFLECTC_NS_UPPER(_LOOKUP__discord_get_guild_audit_log__before), REFLECTC_NS_UPPER(_LOOKUP__discord_get_guild_audit_log__limit), REFLECTC_NS_UPPER(_LOOKUP__discord_get_guild_audit_log_MAX) };
+
+
+
+
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_auto_moderation_trigger_metadata__keyword_filter), REFLECTC_NS_UPPER(_LOOKUP__discord_auto_moderation_trigger_metadata__presets), REFLECTC_NS_UPPER(_LOOKUP__discord_auto_moderation_trigger_metadata_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_auto_moderation_action__type), REFLECTC_NS_UPPER(_LOOKUP__discord_auto_moderation_action__metadata), REFLECTC_NS_UPPER(_LOOKUP__discord_auto_moderation_action_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_auto_moderation_actions__size), REFLECTC_NS_UPPER(_LOOKUP__discord_auto_moderation_actions__array), REFLECTC_NS_UPPER(_LOOKUP__discord_auto_moderation_actions__realsize), REFLECTC_NS_UPPER(_LOOKUP__discord_auto_moderation_actions_MAX) };
@@ -1148,6 +1779,12 @@ enum { REFLECTC_NS_UPPER(_LOOKUP__discord_auto_moderation_rules__size), REFLECTC
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_create_auto_moderation_rule__reason), REFLECTC_NS_UPPER(_LOOKUP__discord_create_auto_moderation_rule__name), REFLECTC_NS_UPPER(_LOOKUP__discord_create_auto_moderation_rule__event_type), REFLECTC_NS_UPPER(_LOOKUP__discord_create_auto_moderation_rule__trigger_type), REFLECTC_NS_UPPER(_LOOKUP__discord_create_auto_moderation_rule__actions), REFLECTC_NS_UPPER(_LOOKUP__discord_create_auto_moderation_rule__trigger_metadata), REFLECTC_NS_UPPER(_LOOKUP__discord_create_auto_moderation_rule__enabled), REFLECTC_NS_UPPER(_LOOKUP__discord_create_auto_moderation_rule__exempt_roles), REFLECTC_NS_UPPER(_LOOKUP__discord_create_auto_moderation_rule__exempt_channels), REFLECTC_NS_UPPER(_LOOKUP__discord_create_auto_moderation_rule_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_modify_auto_moderation_rule__reason), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_auto_moderation_rule__name), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_auto_moderation_rule__event_type), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_auto_moderation_rule__trigger_metadata), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_auto_moderation_rule__actions), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_auto_moderation_rule__enabled), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_auto_moderation_rule__exempt_roles), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_auto_moderation_rule__exempt_channels), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_auto_moderation_rule_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_delete_auto_moderation_rule__reason), REFLECTC_NS_UPPER(_LOOKUP__discord_delete_auto_moderation_rule_MAX) };
+
+
+
+
+
+
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_channel__id), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__type), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__guild_id), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__position), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__permission_overwrites), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__name), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__topic), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__nsfw), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__last_message_id), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__bitrate), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__user_limit), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__rate_limit_per_user), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__recipients), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__icon), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__owner_id), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__application_id), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__managed), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__parent_id), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__last_pin_timestamp), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__rtc_region), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__voice_quality_mode), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__message_count), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__member_count), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__thread_metadata), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__member), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__default_auto_archive_duration), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__permissions), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__flags), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__total_message_sent), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__available_tags), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__applied_tags), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__default_reaction_emoji), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__default_thread_rate_limit_per_user), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__default_sort_order), REFLECTC_NS_UPPER(_LOOKUP__discord_channel__default_forum_layout), REFLECTC_NS_UPPER(_LOOKUP__discord_channel_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_channels__size), REFLECTC_NS_UPPER(_LOOKUP__discord_channels__array), REFLECTC_NS_UPPER(_LOOKUP__discord_channels__realsize), REFLECTC_NS_UPPER(_LOOKUP__discord_channels_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_message_activity__type), REFLECTC_NS_UPPER(_LOOKUP__discord_message_activity__party_id), REFLECTC_NS_UPPER(_LOOKUP__discord_message_activity_MAX) };
@@ -1210,6 +1847,9 @@ enum { REFLECTC_NS_UPPER(_LOOKUP__discord_emojis__size), REFLECTC_NS_UPPER(_LOOK
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_create_guild_emoji__reason), REFLECTC_NS_UPPER(_LOOKUP__discord_create_guild_emoji__name), REFLECTC_NS_UPPER(_LOOKUP__discord_create_guild_emoji__image), REFLECTC_NS_UPPER(_LOOKUP__discord_create_guild_emoji__roles), REFLECTC_NS_UPPER(_LOOKUP__discord_create_guild_emoji_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_modify_guild_emoji__reason), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_guild_emoji__name), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_guild_emoji__image), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_guild_emoji__roles), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_guild_emoji_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_delete_guild_emoji__reason), REFLECTC_NS_UPPER(_LOOKUP__discord_delete_guild_emoji_MAX) };
+
+
+
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_activity__name), REFLECTC_NS_UPPER(_LOOKUP__discord_activity__type), REFLECTC_NS_UPPER(_LOOKUP__discord_activity__url), REFLECTC_NS_UPPER(_LOOKUP__discord_activity__created_at), REFLECTC_NS_UPPER(_LOOKUP__discord_activity__timestamps), REFLECTC_NS_UPPER(_LOOKUP__discord_activity__application_id), REFLECTC_NS_UPPER(_LOOKUP__discord_activity__details), REFLECTC_NS_UPPER(_LOOKUP__discord_activity__state), REFLECTC_NS_UPPER(_LOOKUP__discord_activity__emoji), REFLECTC_NS_UPPER(_LOOKUP__discord_activity__party), REFLECTC_NS_UPPER(_LOOKUP__discord_activity__assets), REFLECTC_NS_UPPER(_LOOKUP__discord_activity__secrets), REFLECTC_NS_UPPER(_LOOKUP__discord_activity__instance), REFLECTC_NS_UPPER(_LOOKUP__discord_activity__flags), REFLECTC_NS_UPPER(_LOOKUP__discord_activity__buttons), REFLECTC_NS_UPPER(_LOOKUP__discord_activity_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_activities__size), REFLECTC_NS_UPPER(_LOOKUP__discord_activities__array), REFLECTC_NS_UPPER(_LOOKUP__discord_activities__realsize), REFLECTC_NS_UPPER(_LOOKUP__discord_activities_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_activity_timestamps__start), REFLECTC_NS_UPPER(_LOOKUP__discord_activity_timestamps__end), REFLECTC_NS_UPPER(_LOOKUP__discord_activity_timestamps_MAX) };
@@ -1258,6 +1898,13 @@ enum { REFLECTC_NS_UPPER(_LOOKUP__discord_typing_start__channel_id), REFLECTC_NS
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_voice_server_update__token), REFLECTC_NS_UPPER(_LOOKUP__discord_voice_server_update__guild_id), REFLECTC_NS_UPPER(_LOOKUP__discord_voice_server_update__endpoint), REFLECTC_NS_UPPER(_LOOKUP__discord_voice_server_update_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_webhooks_update__guild_id), REFLECTC_NS_UPPER(_LOOKUP__discord_webhooks_update__channel_id), REFLECTC_NS_UPPER(_LOOKUP__discord_webhooks_update_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_session_start_limit__total), REFLECTC_NS_UPPER(_LOOKUP__discord_session_start_limit__remaining), REFLECTC_NS_UPPER(_LOOKUP__discord_session_start_limit__reset_after), REFLECTC_NS_UPPER(_LOOKUP__discord_session_start_limit__max_concurrency), REFLECTC_NS_UPPER(_LOOKUP__discord_session_start_limit_MAX) };
+
+
+
+
+
+
+
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_guild__id), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__name), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__icon), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__icon_hash), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__splash), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__discovery_splash), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__owner), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__owner_id), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__permissions), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__afk_channel_id), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__afk_timeout), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__widget_enabled), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__widget_channel_id), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__verification_level), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__default_message_notifications), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__explicit_content_filter), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__roles), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__emojis), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__features), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__mfa_level), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__application_id), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__system_channel_id), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__system_channel_flags), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__rules_channel_id), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__joined_at), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__large), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__unavailable), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__member_count), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__voice_states), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__members), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__channels), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__threads), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__presences), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__max_presences), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__max_members), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__vanity_url_code), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__description), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__banner), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__premium_tier), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__premium_subscription_count), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__preferred_locale), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__public_updates_channel_id), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__max_video_channel_users), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__approximate_member_count), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__approximate_presence_count), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__welcome_screen), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__nsfw_level), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__stage_instances), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__stickers), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__guild_scheduled_events), REFLECTC_NS_UPPER(_LOOKUP__discord_guild__premium_progress_bar_enabled), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_guilds__size), REFLECTC_NS_UPPER(_LOOKUP__discord_guilds__array), REFLECTC_NS_UPPER(_LOOKUP__discord_guilds__realsize), REFLECTC_NS_UPPER(_LOOKUP__discord_guilds_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_guild_preview__id), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_preview__name), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_preview__icon), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_preview__splash), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_preview__discovery_splash), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_preview__emojis), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_preview__features), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_preview__approximate_member_count), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_preview__approximate_presence_count), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_preview__description), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_preview__stickers), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_preview_MAX) };
@@ -1304,6 +1951,9 @@ enum { REFLECTC_NS_UPPER(_LOOKUP__discord_get_guild_widget_image__style), REFLEC
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_modify_guild_welcome_screen__reason), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_guild_welcome_screen__enabled), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_guild_welcome_screen__welcome_channels), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_guild_welcome_screen__description), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_guild_welcome_screen_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_modify_current_user_voice_state__channel_id), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_current_user_voice_state__suppress), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_current_user_voice_state__request_to_speak_timestamp), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_current_user_voice_state_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_modify_user_voice_state__channel_id), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_user_voice_state__suppress), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_user_voice_state_MAX) };
+
+
+
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_guild_scheduled_event__id), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_scheduled_event__guild_id), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_scheduled_event__channel_id), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_scheduled_event__creator_id), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_scheduled_event__name), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_scheduled_event__description), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_scheduled_event__scheduled_start_time), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_scheduled_event__scheduled_end_time), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_scheduled_event__privacy_level), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_scheduled_event__status), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_scheduled_event__entity_type), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_scheduled_event__entity_id), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_scheduled_event__entity_metadata), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_scheduled_event__creator), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_scheduled_event__user_count), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_scheduled_event__image), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_scheduled_event_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_guild_scheduled_event_entity_metadata__location), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_scheduled_event_entity_metadata_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_guild_scheduled_events__size), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_scheduled_events__array), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_scheduled_events__realsize), REFLECTC_NS_UPPER(_LOOKUP__discord_guild_scheduled_events_MAX) };
@@ -1319,6 +1969,8 @@ enum { REFLECTC_NS_UPPER(_LOOKUP__discord_guild_templates__size), REFLECTC_NS_UP
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_create_guild_from_guild_template__name), REFLECTC_NS_UPPER(_LOOKUP__discord_create_guild_from_guild_template__icon), REFLECTC_NS_UPPER(_LOOKUP__discord_create_guild_from_guild_template_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_create_guild_template__name), REFLECTC_NS_UPPER(_LOOKUP__discord_create_guild_template__description), REFLECTC_NS_UPPER(_LOOKUP__discord_create_guild_template_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_modify_guild_template__name), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_guild_template__description), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_guild_template_MAX) };
+
+
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_interaction__id), REFLECTC_NS_UPPER(_LOOKUP__discord_interaction__application_id), REFLECTC_NS_UPPER(_LOOKUP__discord_interaction__type), REFLECTC_NS_UPPER(_LOOKUP__discord_interaction__data), REFLECTC_NS_UPPER(_LOOKUP__discord_interaction__guild_id), REFLECTC_NS_UPPER(_LOOKUP__discord_interaction__channel_id), REFLECTC_NS_UPPER(_LOOKUP__discord_interaction__member), REFLECTC_NS_UPPER(_LOOKUP__discord_interaction__user), REFLECTC_NS_UPPER(_LOOKUP__discord_interaction__token), REFLECTC_NS_UPPER(_LOOKUP__discord_interaction__version), REFLECTC_NS_UPPER(_LOOKUP__discord_interaction__message), REFLECTC_NS_UPPER(_LOOKUP__discord_interaction__locale), REFLECTC_NS_UPPER(_LOOKUP__discord_interaction__guild_locale), REFLECTC_NS_UPPER(_LOOKUP__discord_interaction_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_interaction_data__id), REFLECTC_NS_UPPER(_LOOKUP__discord_interaction_data__name), REFLECTC_NS_UPPER(_LOOKUP__discord_interaction_data__type), REFLECTC_NS_UPPER(_LOOKUP__discord_interaction_data__resolved), REFLECTC_NS_UPPER(_LOOKUP__discord_interaction_data__options), REFLECTC_NS_UPPER(_LOOKUP__discord_interaction_data__custom_id), REFLECTC_NS_UPPER(_LOOKUP__discord_interaction_data__component_type), REFLECTC_NS_UPPER(_LOOKUP__discord_interaction_data__values), REFLECTC_NS_UPPER(_LOOKUP__discord_interaction_data__target_id), REFLECTC_NS_UPPER(_LOOKUP__discord_interaction_data__components), REFLECTC_NS_UPPER(_LOOKUP__discord_interaction_data_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_resolved_data__users), REFLECTC_NS_UPPER(_LOOKUP__discord_resolved_data__members), REFLECTC_NS_UPPER(_LOOKUP__discord_resolved_data__roles), REFLECTC_NS_UPPER(_LOOKUP__discord_resolved_data__channels), REFLECTC_NS_UPPER(_LOOKUP__discord_resolved_data__messages), REFLECTC_NS_UPPER(_LOOKUP__discord_resolved_data__attachments), REFLECTC_NS_UPPER(_LOOKUP__discord_resolved_data_MAX) };
@@ -1328,12 +1980,16 @@ enum { REFLECTC_NS_UPPER(_LOOKUP__discord_interaction_callback_data__components)
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_edit_original_interaction_response__thread_id), REFLECTC_NS_UPPER(_LOOKUP__discord_edit_original_interaction_response__content), REFLECTC_NS_UPPER(_LOOKUP__discord_edit_original_interaction_response__embeds), REFLECTC_NS_UPPER(_LOOKUP__discord_edit_original_interaction_response__allowed_mentions), REFLECTC_NS_UPPER(_LOOKUP__discord_edit_original_interaction_response__components), REFLECTC_NS_UPPER(_LOOKUP__discord_edit_original_interaction_response__attachments), REFLECTC_NS_UPPER(_LOOKUP__discord_edit_original_interaction_response_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_create_followup_message__wait), REFLECTC_NS_UPPER(_LOOKUP__discord_create_followup_message__thread_id), REFLECTC_NS_UPPER(_LOOKUP__discord_create_followup_message__avatar_url), REFLECTC_NS_UPPER(_LOOKUP__discord_create_followup_message__tts), REFLECTC_NS_UPPER(_LOOKUP__discord_create_followup_message__embeds), REFLECTC_NS_UPPER(_LOOKUP__discord_create_followup_message__allowed_mentions), REFLECTC_NS_UPPER(_LOOKUP__discord_create_followup_message__components), REFLECTC_NS_UPPER(_LOOKUP__discord_create_followup_message__attachments), REFLECTC_NS_UPPER(_LOOKUP__discord_create_followup_message__flags), REFLECTC_NS_UPPER(_LOOKUP__discord_create_followup_message_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_edit_followup_message__thread_id), REFLECTC_NS_UPPER(_LOOKUP__discord_edit_followup_message__content), REFLECTC_NS_UPPER(_LOOKUP__discord_edit_followup_message__embeds), REFLECTC_NS_UPPER(_LOOKUP__discord_edit_followup_message__allowed_mentions), REFLECTC_NS_UPPER(_LOOKUP__discord_edit_followup_message__components), REFLECTC_NS_UPPER(_LOOKUP__discord_edit_followup_message__attachments), REFLECTC_NS_UPPER(_LOOKUP__discord_edit_followup_message_MAX) };
+
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_invite__code), REFLECTC_NS_UPPER(_LOOKUP__discord_invite__guild), REFLECTC_NS_UPPER(_LOOKUP__discord_invite__channel), REFLECTC_NS_UPPER(_LOOKUP__discord_invite__inviter), REFLECTC_NS_UPPER(_LOOKUP__discord_invite__target_type), REFLECTC_NS_UPPER(_LOOKUP__discord_invite__target_user), REFLECTC_NS_UPPER(_LOOKUP__discord_invite__target_application), REFLECTC_NS_UPPER(_LOOKUP__discord_invite__approximate_presence_count), REFLECTC_NS_UPPER(_LOOKUP__discord_invite__approximate_member_count), REFLECTC_NS_UPPER(_LOOKUP__discord_invite__expires_at), REFLECTC_NS_UPPER(_LOOKUP__discord_invite__stage_instance), REFLECTC_NS_UPPER(_LOOKUP__discord_invite__guild_scheduled_event), REFLECTC_NS_UPPER(_LOOKUP__discord_invite_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_invites__size), REFLECTC_NS_UPPER(_LOOKUP__discord_invites__array), REFLECTC_NS_UPPER(_LOOKUP__discord_invites__realsize), REFLECTC_NS_UPPER(_LOOKUP__discord_invites_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_invite_metadata__uses), REFLECTC_NS_UPPER(_LOOKUP__discord_invite_metadata__max_uses), REFLECTC_NS_UPPER(_LOOKUP__discord_invite_metadata__max_age), REFLECTC_NS_UPPER(_LOOKUP__discord_invite_metadata__temporary), REFLECTC_NS_UPPER(_LOOKUP__discord_invite_metadata__created_at), REFLECTC_NS_UPPER(_LOOKUP__discord_invite_metadata_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_invite_stage_instance__members), REFLECTC_NS_UPPER(_LOOKUP__discord_invite_stage_instance__participant_count), REFLECTC_NS_UPPER(_LOOKUP__discord_invite_stage_instance__speaker_count), REFLECTC_NS_UPPER(_LOOKUP__discord_invite_stage_instance__topic), REFLECTC_NS_UPPER(_LOOKUP__discord_invite_stage_instance_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_get_invite__with_counts), REFLECTC_NS_UPPER(_LOOKUP__discord_get_invite__with_expiration), REFLECTC_NS_UPPER(_LOOKUP__discord_get_invite__guild_scheduled_event_id), REFLECTC_NS_UPPER(_LOOKUP__discord_get_invite_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_delete_invite__reason), REFLECTC_NS_UPPER(_LOOKUP__discord_delete_invite_MAX) };
+
+
+
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_component__id), REFLECTC_NS_UPPER(_LOOKUP__discord_component__type), REFLECTC_NS_UPPER(_LOOKUP__discord_component__custom_id), REFLECTC_NS_UPPER(_LOOKUP__discord_component__sku_id), REFLECTC_NS_UPPER(_LOOKUP__discord_component__style), REFLECTC_NS_UPPER(_LOOKUP__discord_component__label), REFLECTC_NS_UPPER(_LOOKUP__discord_component__emoji), REFLECTC_NS_UPPER(_LOOKUP__discord_component__url), REFLECTC_NS_UPPER(_LOOKUP__discord_component__options), REFLECTC_NS_UPPER(_LOOKUP__discord_component__placeholder), REFLECTC_NS_UPPER(_LOOKUP__discord_component__min_values), REFLECTC_NS_UPPER(_LOOKUP__discord_component__max_values), REFLECTC_NS_UPPER(_LOOKUP__discord_component__components), REFLECTC_NS_UPPER(_LOOKUP__discord_component__min_length), REFLECTC_NS_UPPER(_LOOKUP__discord_component__max_length), REFLECTC_NS_UPPER(_LOOKUP__discord_component__required), REFLECTC_NS_UPPER(_LOOKUP__discord_component__value), REFLECTC_NS_UPPER(_LOOKUP__discord_component_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_components__size), REFLECTC_NS_UPPER(_LOOKUP__discord_components__array), REFLECTC_NS_UPPER(_LOOKUP__discord_components__realsize), REFLECTC_NS_UPPER(_LOOKUP__discord_components_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_select_option__label), REFLECTC_NS_UPPER(_LOOKUP__discord_select_option__value), REFLECTC_NS_UPPER(_LOOKUP__discord_select_option__description), REFLECTC_NS_UPPER(_LOOKUP__discord_select_option__emoji), REFLECTC_NS_UPPER(_LOOKUP__discord_select_option__Default), REFLECTC_NS_UPPER(_LOOKUP__discord_select_option_MAX) };
@@ -1345,11 +2001,14 @@ enum { REFLECTC_NS_UPPER(_LOOKUP__discord_auth_response__application), REFLECTC_
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_role__id), REFLECTC_NS_UPPER(_LOOKUP__discord_role__name), REFLECTC_NS_UPPER(_LOOKUP__discord_role__color), REFLECTC_NS_UPPER(_LOOKUP__discord_role__hoist), REFLECTC_NS_UPPER(_LOOKUP__discord_role__icon), REFLECTC_NS_UPPER(_LOOKUP__discord_role__unicode_emoji), REFLECTC_NS_UPPER(_LOOKUP__discord_role__position), REFLECTC_NS_UPPER(_LOOKUP__discord_role__permissions), REFLECTC_NS_UPPER(_LOOKUP__discord_role__managed), REFLECTC_NS_UPPER(_LOOKUP__discord_role__mentionable), REFLECTC_NS_UPPER(_LOOKUP__discord_role__tags), REFLECTC_NS_UPPER(_LOOKUP__discord_role_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_roles__size), REFLECTC_NS_UPPER(_LOOKUP__discord_roles__array), REFLECTC_NS_UPPER(_LOOKUP__discord_roles__realsize), REFLECTC_NS_UPPER(_LOOKUP__discord_roles_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_role_tag__bot_id), REFLECTC_NS_UPPER(_LOOKUP__discord_role_tag__integration_id), REFLECTC_NS_UPPER(_LOOKUP__discord_role_tag__premium_subscribe), REFLECTC_NS_UPPER(_LOOKUP__discord_role_tag_MAX) };
+
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_stage_instance__id), REFLECTC_NS_UPPER(_LOOKUP__discord_stage_instance__guild_id), REFLECTC_NS_UPPER(_LOOKUP__discord_stage_instance__channel_id), REFLECTC_NS_UPPER(_LOOKUP__discord_stage_instance__topic), REFLECTC_NS_UPPER(_LOOKUP__discord_stage_instance__privacy_level), REFLECTC_NS_UPPER(_LOOKUP__discord_stage_instance__discoverable_disabled), REFLECTC_NS_UPPER(_LOOKUP__discord_stage_instance_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_stage_instances__size), REFLECTC_NS_UPPER(_LOOKUP__discord_stage_instances__array), REFLECTC_NS_UPPER(_LOOKUP__discord_stage_instances__realsize), REFLECTC_NS_UPPER(_LOOKUP__discord_stage_instances_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_create_stage_instance__reason), REFLECTC_NS_UPPER(_LOOKUP__discord_create_stage_instance__channel_id), REFLECTC_NS_UPPER(_LOOKUP__discord_create_stage_instance__topic), REFLECTC_NS_UPPER(_LOOKUP__discord_create_stage_instance__privacy_level), REFLECTC_NS_UPPER(_LOOKUP__discord_create_stage_instance_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_modify_stage_instance__reason), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_stage_instance__topic), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_stage_instance__privacy_level), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_stage_instance_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_delete_stage_instance__reason), REFLECTC_NS_UPPER(_LOOKUP__discord_delete_stage_instance_MAX) };
+
+
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_sticker__id), REFLECTC_NS_UPPER(_LOOKUP__discord_sticker__pack_id), REFLECTC_NS_UPPER(_LOOKUP__discord_sticker__name), REFLECTC_NS_UPPER(_LOOKUP__discord_sticker__description), REFLECTC_NS_UPPER(_LOOKUP__discord_sticker__tags), REFLECTC_NS_UPPER(_LOOKUP__discord_sticker__type), REFLECTC_NS_UPPER(_LOOKUP__discord_sticker__format_type), REFLECTC_NS_UPPER(_LOOKUP__discord_sticker__available), REFLECTC_NS_UPPER(_LOOKUP__discord_sticker__guild_id), REFLECTC_NS_UPPER(_LOOKUP__discord_sticker__user), REFLECTC_NS_UPPER(_LOOKUP__discord_sticker__sort_value), REFLECTC_NS_UPPER(_LOOKUP__discord_sticker_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_stickers__size), REFLECTC_NS_UPPER(_LOOKUP__discord_stickers__array), REFLECTC_NS_UPPER(_LOOKUP__discord_stickers__realsize), REFLECTC_NS_UPPER(_LOOKUP__discord_stickers_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_sticker_item__id), REFLECTC_NS_UPPER(_LOOKUP__discord_sticker_item__name), REFLECTC_NS_UPPER(_LOOKUP__discord_sticker_item__format_type), REFLECTC_NS_UPPER(_LOOKUP__discord_sticker_item_MAX) };
@@ -1360,9 +2019,12 @@ enum { REFLECTC_NS_UPPER(_LOOKUP__discord_list_nitro_sticker_packs__sticker_pack
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_create_guild_sticker__reason), REFLECTC_NS_UPPER(_LOOKUP__discord_create_guild_sticker__name), REFLECTC_NS_UPPER(_LOOKUP__discord_create_guild_sticker__description), REFLECTC_NS_UPPER(_LOOKUP__discord_create_guild_sticker__tags), REFLECTC_NS_UPPER(_LOOKUP__discord_create_guild_sticker__file), REFLECTC_NS_UPPER(_LOOKUP__discord_create_guild_sticker_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_modify_guild_sticker__reason), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_guild_sticker__name), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_guild_sticker__description), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_guild_sticker__tags), REFLECTC_NS_UPPER(_LOOKUP__discord_modify_guild_sticker_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_delete_guild_sticker__reason), REFLECTC_NS_UPPER(_LOOKUP__discord_delete_guild_sticker_MAX) };
+
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_team__icon), REFLECTC_NS_UPPER(_LOOKUP__discord_team__id), REFLECTC_NS_UPPER(_LOOKUP__discord_team__members), REFLECTC_NS_UPPER(_LOOKUP__discord_team__name), REFLECTC_NS_UPPER(_LOOKUP__discord_team__owner_user_id), REFLECTC_NS_UPPER(_LOOKUP__discord_team_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_team_member__membership_state), REFLECTC_NS_UPPER(_LOOKUP__discord_team_member__permissions), REFLECTC_NS_UPPER(_LOOKUP__discord_team_member__team_id), REFLECTC_NS_UPPER(_LOOKUP__discord_team_member__user), REFLECTC_NS_UPPER(_LOOKUP__discord_team_member_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_team_members__size), REFLECTC_NS_UPPER(_LOOKUP__discord_team_members__array), REFLECTC_NS_UPPER(_LOOKUP__discord_team_members__realsize), REFLECTC_NS_UPPER(_LOOKUP__discord_team_members_MAX) };
+
+
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_user__id), REFLECTC_NS_UPPER(_LOOKUP__discord_user__username), REFLECTC_NS_UPPER(_LOOKUP__discord_user__discriminator), REFLECTC_NS_UPPER(_LOOKUP__discord_user__avatar), REFLECTC_NS_UPPER(_LOOKUP__discord_user__bot), REFLECTC_NS_UPPER(_LOOKUP__discord_user__System), REFLECTC_NS_UPPER(_LOOKUP__discord_user__mfa_enabled), REFLECTC_NS_UPPER(_LOOKUP__discord_user__banner), REFLECTC_NS_UPPER(_LOOKUP__discord_user__accent_color), REFLECTC_NS_UPPER(_LOOKUP__discord_user__locale), REFLECTC_NS_UPPER(_LOOKUP__discord_user__verified), REFLECTC_NS_UPPER(_LOOKUP__discord_user__email), REFLECTC_NS_UPPER(_LOOKUP__discord_user__flags), REFLECTC_NS_UPPER(_LOOKUP__discord_user__premium_type), REFLECTC_NS_UPPER(_LOOKUP__discord_user__public_flags), REFLECTC_NS_UPPER(_LOOKUP__discord_user_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_users__size), REFLECTC_NS_UPPER(_LOOKUP__discord_users__array), REFLECTC_NS_UPPER(_LOOKUP__discord_users__realsize), REFLECTC_NS_UPPER(_LOOKUP__discord_users_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_connection__id), REFLECTC_NS_UPPER(_LOOKUP__discord_connection__name), REFLECTC_NS_UPPER(_LOOKUP__discord_connection__type), REFLECTC_NS_UPPER(_LOOKUP__discord_connection__revoked), REFLECTC_NS_UPPER(_LOOKUP__discord_connection__integrations), REFLECTC_NS_UPPER(_LOOKUP__discord_connection__verified), REFLECTC_NS_UPPER(_LOOKUP__discord_connection__friend_sync), REFLECTC_NS_UPPER(_LOOKUP__discord_connection__show_activity), REFLECTC_NS_UPPER(_LOOKUP__discord_connection__visibility), REFLECTC_NS_UPPER(_LOOKUP__discord_connection_MAX) };
@@ -1375,6 +2037,9 @@ enum { REFLECTC_NS_UPPER(_LOOKUP__discord_voice_state__guild_id), REFLECTC_NS_UP
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_voice_states__size), REFLECTC_NS_UPPER(_LOOKUP__discord_voice_states__array), REFLECTC_NS_UPPER(_LOOKUP__discord_voice_states__realsize), REFLECTC_NS_UPPER(_LOOKUP__discord_voice_states_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_voice_region__id), REFLECTC_NS_UPPER(_LOOKUP__discord_voice_region__name), REFLECTC_NS_UPPER(_LOOKUP__discord_voice_region__optimal), REFLECTC_NS_UPPER(_LOOKUP__discord_voice_region__deprecated), REFLECTC_NS_UPPER(_LOOKUP__discord_voice_region__custom), REFLECTC_NS_UPPER(_LOOKUP__discord_voice_region_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_voice_regions__size), REFLECTC_NS_UPPER(_LOOKUP__discord_voice_regions__array), REFLECTC_NS_UPPER(_LOOKUP__discord_voice_regions__realsize), REFLECTC_NS_UPPER(_LOOKUP__discord_voice_regions_MAX) };
+
+
+
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_webhook__id), REFLECTC_NS_UPPER(_LOOKUP__discord_webhook__type), REFLECTC_NS_UPPER(_LOOKUP__discord_webhook__guild_id), REFLECTC_NS_UPPER(_LOOKUP__discord_webhook__channel_id), REFLECTC_NS_UPPER(_LOOKUP__discord_webhook__user), REFLECTC_NS_UPPER(_LOOKUP__discord_webhook__name), REFLECTC_NS_UPPER(_LOOKUP__discord_webhook__token), REFLECTC_NS_UPPER(_LOOKUP__discord_webhook__application_id), REFLECTC_NS_UPPER(_LOOKUP__discord_webhook__source_channel), REFLECTC_NS_UPPER(_LOOKUP__discord_webhook__url), REFLECTC_NS_UPPER(_LOOKUP__discord_webhook_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_webhooks__size), REFLECTC_NS_UPPER(_LOOKUP__discord_webhooks__array), REFLECTC_NS_UPPER(_LOOKUP__discord_webhooks__realsize), REFLECTC_NS_UPPER(_LOOKUP__discord_webhooks_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_create_webhook__reason), REFLECTC_NS_UPPER(_LOOKUP__discord_create_webhook__name), REFLECTC_NS_UPPER(_LOOKUP__discord_create_webhook__avatar), REFLECTC_NS_UPPER(_LOOKUP__discord_create_webhook_MAX) };
@@ -1385,6 +2050,114 @@ enum { REFLECTC_NS_UPPER(_LOOKUP__discord_execute_webhook__wait), REFLECTC_NS_UP
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_get_webhook_message__thread_id), REFLECTC_NS_UPPER(_LOOKUP__discord_get_webhook_message_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_edit_webhook_message__thread_id), REFLECTC_NS_UPPER(_LOOKUP__discord_edit_webhook_message__content), REFLECTC_NS_UPPER(_LOOKUP__discord_edit_webhook_message__embeds), REFLECTC_NS_UPPER(_LOOKUP__discord_edit_webhook_message__allowed_mentions), REFLECTC_NS_UPPER(_LOOKUP__discord_edit_webhook_message__components), REFLECTC_NS_UPPER(_LOOKUP__discord_edit_webhook_message__attachments), REFLECTC_NS_UPPER(_LOOKUP__discord_edit_webhook_message_MAX) };
 enum { REFLECTC_NS_UPPER(_LOOKUP__discord_delete_webhook_message__thread_id), REFLECTC_NS_UPPER(_LOOKUP__discord_delete_webhook_message_MAX) };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #define reflectc_wrap(_symbol)        reflectc_wrap
@@ -1400,13 +2173,229 @@ enum {
 
 
 
-#undef _
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#undef _
 
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_application)( struct REFLECTC_PREFIX *registry, struct discord_application *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_install_params)( struct REFLECTC_PREFIX *registry, struct discord_install_params *self, struct REFLECTC_NS(_wrap) *root);
+
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_application_command)( struct REFLECTC_PREFIX *registry, struct discord_application_command *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_application_commands)( struct REFLECTC_PREFIX *registry, struct discord_application_commands *self, struct REFLECTC_NS(_wrap) *root);
+
+
+
+
+
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_guild_application_command_permissions)( struct REFLECTC_PREFIX *registry, struct discord_guild_application_command_permissions *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_application_command_permission)( struct REFLECTC_PREFIX *registry, struct discord_application_command_permission *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_application_command_permissions)( struct REFLECTC_PREFIX *registry, struct discord_application_command_permissions *self, struct REFLECTC_NS(_wrap) *root);
@@ -1416,18 +2405,51 @@ struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_create_guild_application_co
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_edit_guild_application_command)( struct REFLECTC_PREFIX *registry, struct discord_edit_guild_application_command *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_bulk_overwrite_guild_application_command)( struct REFLECTC_PREFIX *registry, struct discord_bulk_overwrite_guild_application_command *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_bulk_overwrite_guild_application_commands)( struct REFLECTC_PREFIX *registry, struct discord_bulk_overwrite_guild_application_commands *self, struct REFLECTC_NS(_wrap) *root);
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_audit_log)( struct REFLECTC_PREFIX *registry, struct discord_audit_log *self, struct REFLECTC_NS(_wrap) *root);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_auto_moderation_rule)( struct REFLECTC_PREFIX *registry, struct discord_auto_moderation_rule *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_auto_moderation_rules)( struct REFLECTC_PREFIX *registry, struct discord_auto_moderation_rules *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_create_auto_moderation_rule)( struct REFLECTC_PREFIX *registry, struct discord_create_auto_moderation_rule *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_modify_auto_moderation_rule)( struct REFLECTC_PREFIX *registry, struct discord_modify_auto_moderation_rule *self, struct REFLECTC_NS(_wrap) *root);
+
+
+
+
+
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_channel)( struct REFLECTC_PREFIX *registry, struct discord_channel *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_channels)( struct REFLECTC_PREFIX *registry, struct discord_channels *self, struct REFLECTC_NS(_wrap) *root);
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_message)( struct REFLECTC_PREFIX *registry, struct discord_message *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_messages)( struct REFLECTC_PREFIX *registry, struct discord_messages *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_followed_channel)( struct REFLECTC_PREFIX *registry, struct discord_followed_channel *self, struct REFLECTC_NS(_wrap) *root);
+
+
+
+
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_thread_member)( struct REFLECTC_PREFIX *registry, struct discord_thread_member *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_thread_members)( struct REFLECTC_PREFIX *registry, struct discord_thread_members *self, struct REFLECTC_NS(_wrap) *root);
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_thread_tags)( struct REFLECTC_PREFIX *registry, struct discord_thread_tags *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_embed_thumbnail)( struct REFLECTC_PREFIX *registry, struct discord_embed_thumbnail *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_embed_video)( struct REFLECTC_PREFIX *registry, struct discord_embed_video *self, struct REFLECTC_NS(_wrap) *root);
@@ -1439,15 +2461,26 @@ struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_embed_field)( struct REFLEC
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_embed_fields)( struct REFLECTC_PREFIX *registry, struct discord_embed_fields *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_embed)( struct REFLECTC_PREFIX *registry, struct discord_embed *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_embeds)( struct REFLECTC_PREFIX *registry, struct discord_embeds *self, struct REFLECTC_NS(_wrap) *root);
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_attachments)( struct REFLECTC_PREFIX *registry, struct discord_attachments *self, struct REFLECTC_NS(_wrap) *root);
+
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_thread_response_body)( struct REFLECTC_PREFIX *registry, struct discord_thread_response_body *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_modify_channel)( struct REFLECTC_PREFIX *registry, struct discord_modify_channel *self, struct REFLECTC_NS(_wrap) *root);
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_create_message)( struct REFLECTC_PREFIX *registry, struct discord_create_message *self, struct REFLECTC_NS(_wrap) *root);
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_edit_message)( struct REFLECTC_PREFIX *registry, struct discord_edit_message *self, struct REFLECTC_NS(_wrap) *root);
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_bulk_delete_messages)( struct REFLECTC_PREFIX *registry, struct discord_bulk_delete_messages *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_edit_channel_permissions)( struct REFLECTC_PREFIX *registry, struct discord_edit_channel_permissions *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_create_channel_invite)( struct REFLECTC_PREFIX *registry, struct discord_create_channel_invite *self, struct REFLECTC_NS(_wrap) *root);
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_follow_news_channel)( struct REFLECTC_PREFIX *registry, struct discord_follow_news_channel *self, struct REFLECTC_NS(_wrap) *root);
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_group_dm_add_recipient)( struct REFLECTC_PREFIX *registry, struct discord_group_dm_add_recipient *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_start_thread_with_message)( struct REFLECTC_PREFIX *registry, struct discord_start_thread_with_message *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_start_thread_without_message)( struct REFLECTC_PREFIX *registry, struct discord_start_thread_without_message *self, struct REFLECTC_NS(_wrap) *root);
@@ -1461,8 +2494,24 @@ struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_emoji)( struct REFLECTC_PRE
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_emojis)( struct REFLECTC_PREFIX *registry, struct discord_emojis *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_create_guild_emoji)( struct REFLECTC_PREFIX *registry, struct discord_create_guild_emoji *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_modify_guild_emoji)( struct REFLECTC_PREFIX *registry, struct discord_modify_guild_emoji *self, struct REFLECTC_NS(_wrap) *root);
+
+
+
+
+
+
+
+
+
+
+
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_presence_update)( struct REFLECTC_PREFIX *registry, struct discord_presence_update *self, struct REFLECTC_NS(_wrap) *root);
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_identify)( struct REFLECTC_PREFIX *registry, struct discord_identify *self, struct REFLECTC_NS(_wrap) *root);
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_resume)( struct REFLECTC_PREFIX *registry, struct discord_resume *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_request_guild_members)( struct REFLECTC_PREFIX *registry, struct discord_request_guild_members *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_update_voice_state)( struct REFLECTC_PREFIX *registry, struct discord_update_voice_state *self, struct REFLECTC_NS(_wrap) *root);
@@ -1497,6 +2546,13 @@ struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_typing_start)( struct REFLE
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_voice_server_update)( struct REFLECTC_PREFIX *registry, struct discord_voice_server_update *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_webhooks_update)( struct REFLECTC_PREFIX *registry, struct discord_webhooks_update *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_session_start_limit)( struct REFLECTC_PREFIX *registry, struct discord_session_start_limit *self, struct REFLECTC_NS(_wrap) *root);
+
+
+
+
+
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_guild)( struct REFLECTC_PREFIX *registry, struct discord_guild *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_guilds)( struct REFLECTC_PREFIX *registry, struct discord_guilds *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_guild_preview)( struct REFLECTC_PREFIX *registry, struct discord_guild_preview *self, struct REFLECTC_NS(_wrap) *root);
@@ -1506,76 +2562,140 @@ struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_guild_member)( struct REFLE
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_guild_members)( struct REFLECTC_PREFIX *registry, struct discord_guild_members *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_integration)( struct REFLECTC_PREFIX *registry, struct discord_integration *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_integrations)( struct REFLECTC_PREFIX *registry, struct discord_integrations *self, struct REFLECTC_NS(_wrap) *root);
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_ban)( struct REFLECTC_PREFIX *registry, struct discord_ban *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_bans)( struct REFLECTC_PREFIX *registry, struct discord_bans *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_welcome_screen)( struct REFLECTC_PREFIX *registry, struct discord_welcome_screen *self, struct REFLECTC_NS(_wrap) *root);
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_prune_count)( struct REFLECTC_PREFIX *registry, struct discord_prune_count *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_create_guild)( struct REFLECTC_PREFIX *registry, struct discord_create_guild *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_modify_guild)( struct REFLECTC_PREFIX *registry, struct discord_modify_guild *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_create_guild_channel)( struct REFLECTC_PREFIX *registry, struct discord_create_guild_channel *self, struct REFLECTC_NS(_wrap) *root);
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_modify_guild_channel_positions)( struct REFLECTC_PREFIX *registry, struct discord_modify_guild_channel_positions *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_list_active_guild_threads)( struct REFLECTC_PREFIX *registry, struct discord_list_active_guild_threads *self, struct REFLECTC_NS(_wrap) *root);
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_add_guild_member)( struct REFLECTC_PREFIX *registry, struct discord_add_guild_member *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_modify_guild_member)( struct REFLECTC_PREFIX *registry, struct discord_modify_guild_member *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_modify_current_member)( struct REFLECTC_PREFIX *registry, struct discord_modify_current_member *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_modify_current_user_nick)( struct REFLECTC_PREFIX *registry, struct discord_modify_current_user_nick *self, struct REFLECTC_NS(_wrap) *root);
+
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_create_guild_ban)( struct REFLECTC_PREFIX *registry, struct discord_create_guild_ban *self, struct REFLECTC_NS(_wrap) *root);
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_create_guild_role)( struct REFLECTC_PREFIX *registry, struct discord_create_guild_role *self, struct REFLECTC_NS(_wrap) *root);
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_modify_guild_role_positions)( struct REFLECTC_PREFIX *registry, struct discord_modify_guild_role_positions *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_modify_guild_role)( struct REFLECTC_PREFIX *registry, struct discord_modify_guild_role *self, struct REFLECTC_NS(_wrap) *root);
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_begin_guild_prune)( struct REFLECTC_PREFIX *registry, struct discord_begin_guild_prune *self, struct REFLECTC_NS(_wrap) *root);
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_modify_guild_welcome_screen)( struct REFLECTC_PREFIX *registry, struct discord_modify_guild_welcome_screen *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_modify_current_user_voice_state)( struct REFLECTC_PREFIX *registry, struct discord_modify_current_user_voice_state *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_modify_user_voice_state)( struct REFLECTC_PREFIX *registry, struct discord_modify_user_voice_state *self, struct REFLECTC_NS(_wrap) *root);
+
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_guild_scheduled_event)( struct REFLECTC_PREFIX *registry, struct discord_guild_scheduled_event *self, struct REFLECTC_NS(_wrap) *root);
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_guild_scheduled_events)( struct REFLECTC_PREFIX *registry, struct discord_guild_scheduled_events *self, struct REFLECTC_NS(_wrap) *root);
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_guild_scheduled_event_users)( struct REFLECTC_PREFIX *registry, struct discord_guild_scheduled_event_users *self, struct REFLECTC_NS(_wrap) *root);
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_create_guild_scheduled_event)( struct REFLECTC_PREFIX *registry, struct discord_create_guild_scheduled_event *self, struct REFLECTC_NS(_wrap) *root);
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_modify_guild_scheduled_event)( struct REFLECTC_PREFIX *registry, struct discord_modify_guild_scheduled_event *self, struct REFLECTC_NS(_wrap) *root);
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_guild_template)( struct REFLECTC_PREFIX *registry, struct discord_guild_template *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_guild_templates)( struct REFLECTC_PREFIX *registry, struct discord_guild_templates *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_create_guild_from_guild_template)( struct REFLECTC_PREFIX *registry, struct discord_create_guild_from_guild_template *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_create_guild_template)( struct REFLECTC_PREFIX *registry, struct discord_create_guild_template *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_modify_guild_template)( struct REFLECTC_PREFIX *registry, struct discord_modify_guild_template *self, struct REFLECTC_NS(_wrap) *root);
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_interaction)( struct REFLECTC_PREFIX *registry, struct discord_interaction *self, struct REFLECTC_NS(_wrap) *root);
+
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_interaction_response)( struct REFLECTC_PREFIX *registry, struct discord_interaction_response *self, struct REFLECTC_NS(_wrap) *root);
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_edit_original_interaction_response)( struct REFLECTC_PREFIX *registry, struct discord_edit_original_interaction_response *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_create_followup_message)( struct REFLECTC_PREFIX *registry, struct discord_create_followup_message *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_edit_followup_message)( struct REFLECTC_PREFIX *registry, struct discord_edit_followup_message *self, struct REFLECTC_NS(_wrap) *root);
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_invite)( struct REFLECTC_PREFIX *registry, struct discord_invite *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_invites)( struct REFLECTC_PREFIX *registry, struct discord_invites *self, struct REFLECTC_NS(_wrap) *root);
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_get_invite)( struct REFLECTC_PREFIX *registry, struct discord_get_invite *self, struct REFLECTC_NS(_wrap) *root);
+
+
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_component)( struct REFLECTC_PREFIX *registry, struct discord_component *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_components)( struct REFLECTC_PREFIX *registry, struct discord_components *self, struct REFLECTC_NS(_wrap) *root);
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_select_options)( struct REFLECTC_PREFIX *registry, struct discord_select_options *self, struct REFLECTC_NS(_wrap) *root);
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_component_items)( struct REFLECTC_PREFIX *registry, struct discord_component_items *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_auth_response)( struct REFLECTC_PREFIX *registry, struct discord_auth_response *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_role)( struct REFLECTC_PREFIX *registry, struct discord_role *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_roles)( struct REFLECTC_PREFIX *registry, struct discord_roles *self, struct REFLECTC_NS(_wrap) *root);
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_stage_instance)( struct REFLECTC_PREFIX *registry, struct discord_stage_instance *self, struct REFLECTC_NS(_wrap) *root);
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_create_stage_instance)( struct REFLECTC_PREFIX *registry, struct discord_create_stage_instance *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_modify_stage_instance)( struct REFLECTC_PREFIX *registry, struct discord_modify_stage_instance *self, struct REFLECTC_NS(_wrap) *root);
+
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_sticker)( struct REFLECTC_PREFIX *registry, struct discord_sticker *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_stickers)( struct REFLECTC_PREFIX *registry, struct discord_stickers *self, struct REFLECTC_NS(_wrap) *root);
+
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_sticker_packs)( struct REFLECTC_PREFIX *registry, struct discord_sticker_packs *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_list_nitro_sticker_packs)( struct REFLECTC_PREFIX *registry, struct discord_list_nitro_sticker_packs *self, struct REFLECTC_NS(_wrap) *root);
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_modify_guild_sticker)( struct REFLECTC_PREFIX *registry, struct discord_modify_guild_sticker *self, struct REFLECTC_NS(_wrap) *root);
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_team)( struct REFLECTC_PREFIX *registry, struct discord_team *self, struct REFLECTC_NS(_wrap) *root);
+
+
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_user)( struct REFLECTC_PREFIX *registry, struct discord_user *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_users)( struct REFLECTC_PREFIX *registry, struct discord_users *self, struct REFLECTC_NS(_wrap) *root);
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_connections)( struct REFLECTC_PREFIX *registry, struct discord_connections *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_modify_current_user)( struct REFLECTC_PREFIX *registry, struct discord_modify_current_user *self, struct REFLECTC_NS(_wrap) *root);
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_create_dm)( struct REFLECTC_PREFIX *registry, struct discord_create_dm *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_create_group_dm)( struct REFLECTC_PREFIX *registry, struct discord_create_group_dm *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_voice_state)( struct REFLECTC_PREFIX *registry, struct discord_voice_state *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_voice_states)( struct REFLECTC_PREFIX *registry, struct discord_voice_states *self, struct REFLECTC_NS(_wrap) *root);
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_voice_regions)( struct REFLECTC_PREFIX *registry, struct discord_voice_regions *self, struct REFLECTC_NS(_wrap) *root);
+
+
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_webhook)( struct REFLECTC_PREFIX *registry, struct discord_webhook *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_webhooks)( struct REFLECTC_PREFIX *registry, struct discord_webhooks *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_create_webhook)( struct REFLECTC_PREFIX *registry, struct discord_create_webhook *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_modify_webhook)( struct REFLECTC_PREFIX *registry, struct discord_modify_webhook *self, struct REFLECTC_NS(_wrap) *root);
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_modify_webhook_with_token)( struct REFLECTC_PREFIX *registry, struct discord_modify_webhook_with_token *self, struct REFLECTC_NS(_wrap) *root);
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_execute_webhook)( struct REFLECTC_PREFIX *registry, struct discord_execute_webhook *self, struct REFLECTC_NS(_wrap) *root);
+
 struct REFLECTC_NS(_wrap) *REFLECTC_NS(_from_discord_edit_webhook_message)( struct REFLECTC_PREFIX *registry, struct discord_edit_webhook_message *self, struct REFLECTC_NS(_wrap) *root);
 
 
