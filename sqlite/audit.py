@@ -186,6 +186,40 @@ def check_domain(db, verbose):
         elif verbose:
             print("  band_segments no overlaps".ljust(66) + "ok")
 
+        # Privilege nesting. In most licensing regimes a higher class holds a
+        # superset of a lower one, so a segment that a junior class has and a
+        # senior class does not is nearly always a missing row rather than a
+        # real rule. This is exactly the shape of bug that reads as plausible
+        # output - "Extra: not permitted on 2m" looks like data, not an error.
+        #
+        # A warning, not a failure: the superset assumption is true of the US
+        # and most countries, but it is an assumption, and a contributed band
+        # plan could legitimately break it.
+        rows = db.execute("""
+            SELECT DISTINCT hi.code, lo.code, b.name, s.low_hz, s.high_hz
+            FROM band_segments s
+            JOIN license_classes lo ON lo.id = s.class_id
+            JOIN license_classes hi ON hi.country = lo.country AND hi.rank > lo.rank
+            JOIN bands b ON b.id = s.band_id
+            WHERE s.country = lo.country
+              AND NOT EXISTS (
+                  SELECT 1 FROM band_segments t
+                  WHERE t.country  = s.country
+                    AND t.class_id = hi.id
+                    AND t.low_hz  <= s.low_hz
+                    AND s.high_hz <= t.high_hz)
+            ORDER BY b.name, hi.rank DESC""").fetchall()
+
+        if rows:
+            for r in rows[:8]:
+                warn("band_segments",
+                     f"{r[0]} lacks {r[2]} {r[3]/1e6:.3f}-{r[4]/1e6:.3f} MHz "
+                     f"that {r[1]} holds - missing row?")
+            if len(rows) > 8:
+                warn("band_segments", f"...and {len(rows) - 8} more nesting gaps")
+        elif verbose:
+            print("  band_segments privileges nest by rank".ljust(66) + "ok")
+
     if "ncdxf_beacons" in present:
         slots = [r[0] for r in db.execute("SELECT slot_index FROM ncdxf_beacons ORDER BY slot_index")]
         if slots != list(range(18)):

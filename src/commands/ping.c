@@ -13,7 +13,7 @@ static int64_t hammy_snowflake_to_ms(u64snowflake id) {
 }
  
 // Instant command: runs on the gateway thread, sends a fresh response.
-void hammy_cmd_ping(const hammy_job_t* job, struct discord* client, const hammy_refdb_t* refdb) {
+void hammy_cmd_ping(const hammy_job_t* job, struct discord* client, hammy_refdb_t* refdb) {
     (void)refdb;
 
     // Gateway heartbeat round trip, as measured by Concord.

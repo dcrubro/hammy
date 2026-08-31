@@ -1,11 +1,12 @@
 #include <concord/log.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include <hammy/refdb.h>
 
 // Whole-callsign rules (cty.dat's "=CALL" entries) must match the entire string.
-static const char* SQL_EXACT =
+static const char SQL_EXACT[] =
     "SELECT e.id, e.name, e.continent,"
     "       COALESCE(p.cq_zone, e.cq_zone), COALESCE(p.itu_zone, e.itu_zone),"
     "       e.latitude, e.longitude, e.utc_offset, p.prefix"
@@ -14,7 +15,7 @@ static const char* SQL_EXACT =
     " LIMIT 1";
  
 // One candidate at a time, called longest-first by the caller.
-static const char* SQL_PREFIX =
+static const char SQL_PREFIX[] =
     "SELECT e.id, e.name, e.continent,"
     "       COALESCE(p.cq_zone, e.cq_zone), COALESCE(p.itu_zone, e.itu_zone),"
     "       e.latitude, e.longitude, e.utc_offset, p.prefix"
@@ -22,10 +23,10 @@ static const char* SQL_PREFIX =
     " WHERE p.prefix = ?1 AND p.exact = 0"
     " LIMIT 1";
  
-static const char* SQL_VERSION =
+static const char SQL_VERSION[] =
     "SELECT value FROM ref_meta WHERE key = 'bundle_version'";
 
-static const char* SQL_MORSE =
+static const char SQL_MORSE[] =
     "SELECT code FROM morse WHERE character = UPPER(?1) LIMIT 1";
 
 // Band plus per-class privileges in one pass.
@@ -39,7 +40,7 @@ static const char* SQL_MORSE =
 //   band_segments  half-open [low, high). 14.150 is the START of the phone
 //                  segment, not the end of the CW one. BETWEEN would match
 //                  both and the command would print contradictory modes.
-static const char* SQL_FREQ_MAIN =
+static const char SQL_FREQ_MAIN[] =
     "SELECT b.name, b.edge_low_hz, b.edge_high_hz,"
     "       lc.code, lc.name, lc.rank,"
     "       s.modes, s.low_hz, s.high_hz, s.max_power_w, s.notes"
@@ -58,7 +59,7 @@ static const char* SQL_FREQ_MAIN =
 // Regional allocation, independent of national licensing. country = '' and
 // class_id IS NULL mark these rows: they say what the band IS in a region, not
 // who may use it.
-static const char* SQL_FREQ_IARU =
+static const char SQL_FREQ_IARU[] =
     "SELECT s.iaru_region, s.low_hz, s.high_hz, s.modes"
     "  FROM band_segments s"
     " WHERE s.country = '' AND s.class_id IS NULL"
@@ -66,22 +67,24 @@ static const char* SQL_FREQ_IARU =
     " ORDER BY s.iaru_region";
  
 // min() with two arguments is SQLite's scalar min, not the aggregate.
-static const char* SQL_FREQ_NEAREST =
+static const char SQL_FREQ_NEAREST[] =
     "SELECT name, edge_low_hz, edge_high_hz,"
     "       min(abs(edge_low_hz - ?1), abs(edge_high_hz - ?1))"
     "  FROM bands ORDER BY 4 LIMIT 1";
  
 // Is the frequency exactly on a segment boundary for this country?
-static const char* SQL_FREQ_SEG_EDGE =
+static const char SQL_FREQ_SEG_EDGE[] =
     "SELECT 1 FROM band_segments"
     " WHERE country = ?2 AND (low_hz = ?1 OR high_hz = ?1) LIMIT 1";
  
-static const char* SQL_countryKnown =
-    "SELECT 1 FROM license_classes WHERE country = ?1 LIMIT 1";
- 
-static const char* SQL_COUNTRY_LIST =
+static const char SQL_COUNTRY_LIST[] =
     "SELECT DISTINCT country FROM license_classes"
     " WHERE country <> '' ORDER BY country";
+
+// Does the bundle carry licence data for this country at all? Only US is seeded
+// so far, so "no data yet" is the common answer and needs saying properly.
+static const char SQL_COUNTRY_KNOWN[] =
+    "SELECT 1 FROM license_classes WHERE country = ?1 LIMIT 1";
 
 // Authorizer: the connection may read, and nothing else.
 //
@@ -108,9 +111,70 @@ static int hammy_refdb_authorizer(void* unused, int action,
     }
 }
 
+// Every prepared statement is registered in HAMMY_STATEMENTS below, exactly
+// once. open() and close() both walk that table, so adding a statement means
+// adding one row - not a struct field plus a prepare call plus a finalize call,
+// three places that can silently drift apart.
+//
+// That drift is what produced the stCountryKnown crash: the field and the SQL
+// existed, the prepare didn't, and sqlite3_clear_bindings() dereferenced a NULL
+// left over from calloc(). Now it's impossible to reach a slot except through
+// the table.
+// NOTE: the SQL_* constants above are declared `static const char X[]`, not
+// `static const char* X`. A pointer variable is not a constant expression, so
+// using one in this table's static initializer is a compile error
+// ("initializer element is not constant"). An array's address is a link-time
+// constant and works. Don't "tidy" them back into pointers.
+typedef struct {
+    const char* name;       // for log messages
+    size_t offset;          // into struct hammy_refdb_t
+    const char* sql;
+} hammy_stmt_def_t;
+
+#define HAMMY_STMT(field, sqlConst) \
+    { #field, offsetof(struct hammy_refdb_t, field), sqlConst }
+
+static const hammy_stmt_def_t HAMMY_STATEMENTS[] = {
+    HAMMY_STMT(stExact,        SQL_EXACT),
+    HAMMY_STMT(stPrefix,       SQL_PREFIX),
+    HAMMY_STMT(stMorse,        SQL_MORSE),
+    HAMMY_STMT(stFreqMain,     SQL_FREQ_MAIN),
+    HAMMY_STMT(stFreqIaru,     SQL_FREQ_IARU),
+    HAMMY_STMT(stFreqNearest,  SQL_FREQ_NEAREST),
+    HAMMY_STMT(stFreqSegEdge,  SQL_FREQ_SEG_EDGE),
+    HAMMY_STMT(stCountryKnown, SQL_COUNTRY_KNOWN),
+    HAMMY_STMT(stCountryList,  SQL_COUNTRY_LIST),
+};
+
+#define HAMMY_STMT_COUNT (sizeof(HAMMY_STATEMENTS) / sizeof(HAMMY_STATEMENTS[0]))
+
+static sqlite3_stmt** stmt_slot(hammy_refdb_t* db, const hammy_stmt_def_t* def) {
+    return (sqlite3_stmt**)((char*)db + def->offset);
+}
+
+// sqlite3_reset(NULL) is harmless, but sqlite3_clear_bindings(NULL) dereferences
+// straight away. Query entry points check their statements before touching them,
+// so a half-built refdb returns false instead of taking the process down.
+static bool stmts_ready(const char* where, sqlite3_stmt* const* stmts, size_t count) {
+    for (size_t i = 0; i < count; i++) {
+        if (!stmts[i]) {
+            log_error("[refdb] %s called with unprepared statements", where);
+            return false;
+        }
+    }
+
+    return true;
+}
+
 static bool prepare(sqlite3* h, const char* sql, sqlite3_stmt** out) {
     if (sqlite3_prepare_v2(h, sql, -1, out, NULL) != SQLITE_OK) {
         log_error("[refdb] prepare failed: %s", sqlite3_errmsg(h));
+        log_error("[refdb]   sql: %s", sql);
+
+        // prepare_v2 doesn't reliably clear this on every error path, and a
+        // garbage pointer would sail past the NULL checks below.
+        *out = NULL;
+
         return false;
     }
 
@@ -156,9 +220,24 @@ hammy_refdb_t* hammy_refdb_open(const char* path) {
 
     sqlite3_set_authorizer(db->handle, &hammy_refdb_authorizer, NULL);
 
-    if (!prepare(db->handle, SQL_EXACT, &db->stExact)) { goto fail; }
-    if (!prepare(db->handle, SQL_PREFIX, &db->stPrefix)) { goto fail; }
-    if (!prepare(db->handle, SQL_MORSE, &db->stMorse)) { goto fail; }
+    for (size_t i = 0; i < HAMMY_STMT_COUNT; i++) {
+        const hammy_stmt_def_t* def = &HAMMY_STATEMENTS[i];
+
+        if (!prepare(db->handle, def->sql, stmt_slot(db, def))) {
+            log_error("[refdb] statement '%s' failed to prepare", def->name);
+            goto fail;
+        }
+    }
+
+    // Belt and braces. A registry that drifts from the struct would otherwise
+    // leave a NULL slot that crashes inside SQLite on first use, far from the
+    // cause. Fail here instead, naming the statement.
+    for (size_t i = 0; i < HAMMY_STMT_COUNT; i++) {
+        if (!(*stmt_slot(db, &HAMMY_STATEMENTS[i]))) {
+            log_error("[refdb] statement '%s' is NULL after prepare", HAMMY_STATEMENTS[i].name);
+            goto fail;
+        }
+    }
 
     sqlite3_stmt* st = NULL;
     if (prepare(db->handle, SQL_VERSION, &st)) {
@@ -186,9 +265,14 @@ bool hammy_refdb_close(hammy_refdb_t** db) {
 
     // Statements must be finalized before the connection closes, or we're in deep shit
     // (sqlite3_close() returns SQLITE_BUSY and the handle leaks)
-    if (d->stExact) { sqlite3_finalize(d->stExact); }
-    if (d->stPrefix) { sqlite3_finalize(d->stPrefix); }
-    if (d->stMorse) { sqlite3_finalize(d->stMorse); }
+    for (size_t i = 0; i < HAMMY_STMT_COUNT; i++) {
+        sqlite3_stmt** slot = stmt_slot(d, &HAMMY_STATEMENTS[i]);
+
+        if (*slot) {
+            sqlite3_finalize(*slot);
+            *slot = NULL;
+        }
+    }
     
     if (d->handle) { sqlite3_close(d->handle); }
 
@@ -265,6 +349,9 @@ static bool search_prefixes(hammy_refdb_t* db, const char* call, hammy_dxcc_t* o
 
 bool hammy_refdb_dxcc(hammy_refdb_t* db, const char* callsign, hammy_dxcc_t* out) {
     if (!db || !callsign || !out) { return false; }
+
+    sqlite3_stmt* const needed[] = { db->stExact, db->stPrefix };
+    if (!stmts_ready("dxcc", needed, 2)) { return false; }
  
     char call[HAMMY_CALLSIGN_MAX];
     normalise(callsign, call, sizeof(call));
@@ -322,6 +409,9 @@ bool hammy_refdb_dxcc(hammy_refdb_t* db, const char* callsign, hammy_dxcc_t* out
 
 bool hammy_refdb_get_morse(hammy_refdb_t* db, char c, const char** out) {
     if (!db || !out) { return false; }
+
+    sqlite3_stmt* const needed[] = { db->stMorse };
+    if (!stmts_ready("morse", needed, 1)) { return false; }
 
     // The table is ASCII (ITU-R M.1677-1 has no non-Latin extensions), and a
     // single byte out of a multi-byte UTF-8 sequence is not valid text to bind,
@@ -477,6 +567,12 @@ static bool step_bool(sqlite3_stmt* st) {
 bool hammy_refdb_freq(hammy_refdb_t* db, int64_t freqHz, const char* country,
                       hammy_freq_t* out) {
     if (!db || !out || freqHz <= 0) { return false; }
+
+    sqlite3_stmt* const needed[] = {
+        db->stFreqMain, db->stFreqIaru, db->stFreqNearest,
+        db->stFreqSegEdge, db->stCountryKnown
+    };
+    if (!stmts_ready("freq", needed, 5)) { return false; }
  
     memset(out, 0, sizeof(*out));
     out->freqHz = freqHz;
@@ -582,7 +678,7 @@ bool hammy_refdb_freq(hammy_refdb_t* db, int64_t freqHz, const char* country,
  
 size_t hammy_refdb_countries(hammy_refdb_t* db,
                              char out[][HAMMY_COUNTRY_MAX], size_t cap) {
-    if (!db || !out || cap == 0) return 0;
+    if (!db || !out || cap == 0 || !db->stCountryList) { return 0; }
  
     size_t n = 0;
  

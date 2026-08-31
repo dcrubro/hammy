@@ -37,22 +37,105 @@ INSERT INTO license_classes (id, country, code, name, rank, notes) VALUES
 -- US band segments (47 CFR Part 97)
 --
 -- VERIFY BEFORE SHIPPING. Hand-entered from the Part 97 privilege tables.
+-- Wrong edges or wrong privileges can put an operator outside their licence.
+--
+-- Two shapes are used here, deliberately:
+--
+--   1. Bands where every eligible class gets the SAME range are generated with
+--      INSERT..SELECT over license_classes and a rank threshold. The rule is
+--      stated once, in the WHERE clause, and the rows follow from it.
+--
+--   2. Bands where classes get GENUINELY DIFFERENT ranges (most of HF: Extra
+--      has 14.000-14.150 where General has 14.025-14.150) are written out
+--      explicitly, one row per class. A rank threshold cannot express that.
+--
+-- Shape 1 exists because hand-enumerating six bands times five classes is
+-- thirty near-identical rows, and the first version of this file missed several
+-- of them - Advanced was absent from 2200m, 630m and 60m entirely, and VHF/UHF
+-- was seeded for Technician only, so an Extra was told they had no 2m access.
+-- audit.py's privilege-nesting check catches that class of mistake now, but not
+-- making it is better.
 -- ---------------------------------------------------------------------------
 
--- 2200m and 630m: all classes, strict EIRP limits, notification required
-INSERT INTO band_segments (band_id, country, class_id, low_hz, high_hz, modes, max_power_w, notes) VALUES
-    (1, 'US', 1, 135700, 137800, 'CW,DATA', NULL, '1 W EIRP maximum'),
-    (1, 'US', 3, 135700, 137800, 'CW,DATA', NULL, '1 W EIRP maximum'),
-    (1, 'US', 4, 135700, 137800, 'CW,DATA', NULL, '1 W EIRP maximum'),
-    (2, 'US', 1, 472000, 479000, 'CW,DATA', NULL, '5 W EIRP maximum'),
-    (2, 'US', 3, 472000, 479000, 'CW,DATA', NULL, '5 W EIRP maximum'),
-    (2, 'US', 4, 472000, 479000, 'CW,DATA', NULL, '5 W EIRP maximum');
+-- 2200m and 630m: all classes. Strict EIRP limits, and the operator must notify
+-- UTC and await a response before transmitting.
+-- VERIFY: whether Novice holds these is the part I am least sure of.
+INSERT INTO band_segments (band_id, country, class_id, low_hz, high_hz, modes, max_power_w, notes)
+SELECT v.band_id, 'US', lc.id, v.low_hz, v.high_hz, v.modes, v.max_power_w, v.notes
+  FROM license_classes lc
+  JOIN (
+        SELECT 1 AS band_id, 135700 AS low_hz, 137800 AS high_hz,
+               'CW,DATA' AS modes, NULL AS max_power_w, '1 W EIRP maximum' AS notes
+  UNION SELECT 2, 472000, 479000, 'CW,DATA', NULL, '5 W EIRP maximum'
+  ) v
+ WHERE lc.country = 'US';
 
--- 160m: General and above, full band
-INSERT INTO band_segments (band_id, country, class_id, low_hz, high_hz, modes, max_power_w, notes) VALUES
-    (3, 'US', 1, 1800000, 2000000, 'CW,DATA,PHONE,IMAGE', NULL, NULL),
-    (3, 'US', 2, 1800000, 2000000, 'CW,DATA,PHONE,IMAGE', NULL, NULL),
-    (3, 'US', 3, 1800000, 2000000, 'CW,DATA,PHONE,IMAGE', NULL, NULL);
+-- 160m, 30m, 17m, 12m: General and above (rank >= 30), whole band, same for all.
+INSERT INTO band_segments (band_id, country, class_id, low_hz, high_hz, modes, max_power_w, notes)
+SELECT v.band_id, 'US', lc.id, v.low_hz, v.high_hz, v.modes, v.max_power_w, v.notes
+  FROM license_classes lc
+  JOIN (
+        SELECT 3 AS band_id, 1800000 AS low_hz, 2000000 AS high_hz,
+               'CW,DATA,PHONE,IMAGE' AS modes, NULL AS max_power_w, NULL AS notes
+  UNION SELECT 7,  10100000, 10150000, 'CW,DATA',     200,  'No phone or image permitted'
+  UNION SELECT 9,  18068000, 18110000, 'CW,DATA',     NULL, NULL
+  UNION SELECT 9,  18110000, 18168000, 'PHONE,IMAGE', NULL, NULL
+  UNION SELECT 11, 24890000, 24930000, 'CW,DATA',     NULL, NULL
+  UNION SELECT 11, 24930000, 24990000, 'PHONE,IMAGE', NULL, NULL
+  ) v
+ WHERE lc.country = 'US' AND lc.rank >= 30;
+
+-- 60m: five discrete channels, General and above. Stored as channel-width
+-- ranges; the USB dial frequency is the channel centre minus 1.5 kHz.
+INSERT INTO band_segments (band_id, country, class_id, low_hz, high_hz, modes, max_power_w, notes)
+SELECT 5, 'US', lc.id, v.low_hz, v.high_hz, 'CW,DATA,PHONE', NULL, v.notes
+  FROM license_classes lc
+  JOIN (
+        SELECT 5330500 AS low_hz, 5333300 AS high_hz, 'Channel 1, 100 W ERP, USB' AS notes
+  UNION SELECT 5346500, 5349300, 'Channel 2, 100 W ERP, USB'
+  UNION SELECT 5357000, 5359800, 'Channel 3, 100 W ERP, USB'
+  UNION SELECT 5371500, 5374300, 'Channel 4, 100 W ERP, USB'
+  UNION SELECT 5403500, 5406300, 'Channel 5, 100 W ERP, USB'
+  ) v
+ WHERE lc.country = 'US' AND lc.rank >= 30;
+
+-- VHF/UHF and above: Technician and higher (rank >= 20) hold the full
+-- allocation. There is no per-class variation above 50 MHz except for Novice.
+INSERT INTO band_segments (band_id, country, class_id, low_hz, high_hz, modes, max_power_w, notes)
+SELECT v.band_id, 'US', lc.id, v.low_hz, v.high_hz, v.modes, v.max_power_w, v.notes
+  FROM license_classes lc
+  JOIN (
+        SELECT 13 AS band_id, 50000000 AS low_hz, 50100000 AS high_hz,
+               'CW' AS modes, NULL AS max_power_w, 'CW only below 50.1 MHz' AS notes
+  UNION SELECT 13, 50100000,   54000000,   'CW,DATA,PHONE,IMAGE', NULL, NULL
+  UNION SELECT 14, 144000000,  144100000,  'CW',                  NULL, 'CW only below 144.1 MHz'
+  UNION SELECT 14, 144100000,  148000000,  'CW,DATA,PHONE,IMAGE', NULL, NULL
+  UNION SELECT 15, 222000000,  225000000,  'CW,DATA,PHONE,IMAGE', NULL, NULL
+  UNION SELECT 16, 420000000,  450000000,  'CW,DATA,PHONE,IMAGE', NULL,
+               'Geographic restrictions apply near some radar sites'
+  UNION SELECT 17, 902000000,  928000000,  'CW,DATA,PHONE,IMAGE', NULL,
+               'Secondary allocation, shared with Part 15 devices'
+  UNION SELECT 18, 1240000000, 1300000000, 'CW,DATA,PHONE,IMAGE', NULL, NULL
+  ) v
+ WHERE lc.country = 'US' AND lc.rank >= 20;
+
+-- Novice above 50 MHz: two reduced-power slices and nothing else.
+-- VERIFY: Novice licences have not been issued since 2000, so an error here
+-- would go unnoticed for years.
+INSERT INTO band_segments (band_id, country, class_id, low_hz, high_hz, modes, max_power_w, notes)
+SELECT v.band_id, 'US', lc.id, v.low_hz, v.high_hz, 'CW,DATA,PHONE,IMAGE', v.max_power_w,
+       'Novice segment, reduced power'
+  FROM license_classes lc
+  JOIN (
+        SELECT 15 AS band_id, 222000000 AS low_hz, 225000000 AS high_hz, 25 AS max_power_w
+  UNION SELECT 18, 1270000000, 1295000000, 5
+  ) v
+ WHERE lc.country = 'US' AND lc.code = 'N';
+
+-- ---------------------------------------------------------------------------
+-- Bands where classes get genuinely different ranges. Written out explicitly:
+-- a rank threshold cannot express "Extra from 3.500, General from 3.525".
+-- ---------------------------------------------------------------------------
 
 -- 80m / 75m
 INSERT INTO band_segments (band_id, country, class_id, low_hz, high_hz, modes, max_power_w, notes) VALUES
@@ -65,20 +148,6 @@ INSERT INTO band_segments (band_id, country, class_id, low_hz, high_hz, modes, m
     (4, 'US', 4, 3525000, 3600000, 'CW',          200,  'CW only'),
     (4, 'US', 5, 3525000, 3600000, 'CW',          200,  'CW only');
 
--- 60m: five discrete channels, General and above.
--- Stored as channel-width ranges; centre frequency is the USB dial + 1.5 kHz.
-INSERT INTO band_segments (band_id, country, class_id, low_hz, high_hz, modes, max_power_w, notes) VALUES
-    (5, 'US', 1, 5330500, 5333300, 'CW,DATA,PHONE', NULL, 'Channel 1, 100 W ERP, USB'),
-    (5, 'US', 1, 5346500, 5349300, 'CW,DATA,PHONE', NULL, 'Channel 2, 100 W ERP, USB'),
-    (5, 'US', 1, 5357000, 5359800, 'CW,DATA,PHONE', NULL, 'Channel 3, 100 W ERP, USB'),
-    (5, 'US', 1, 5371500, 5374300, 'CW,DATA,PHONE', NULL, 'Channel 4, 100 W ERP, USB'),
-    (5, 'US', 1, 5403500, 5406300, 'CW,DATA,PHONE', NULL, 'Channel 5, 100 W ERP, USB'),
-    (5, 'US', 3, 5330500, 5333300, 'CW,DATA,PHONE', NULL, 'Channel 1, 100 W ERP, USB'),
-    (5, 'US', 3, 5346500, 5349300, 'CW,DATA,PHONE', NULL, 'Channel 2, 100 W ERP, USB'),
-    (5, 'US', 3, 5357000, 5359800, 'CW,DATA,PHONE', NULL, 'Channel 3, 100 W ERP, USB'),
-    (5, 'US', 3, 5371500, 5374300, 'CW,DATA,PHONE', NULL, 'Channel 4, 100 W ERP, USB'),
-    (5, 'US', 3, 5403500, 5406300, 'CW,DATA,PHONE', NULL, 'Channel 5, 100 W ERP, USB');
-
 -- 40m
 INSERT INTO band_segments (band_id, country, class_id, low_hz, high_hz, modes, max_power_w, notes) VALUES
     (6, 'US', 1, 7000000, 7125000, 'CW,DATA',     NULL, NULL),
@@ -90,12 +159,6 @@ INSERT INTO band_segments (band_id, country, class_id, low_hz, high_hz, modes, m
     (6, 'US', 4, 7025000, 7125000, 'CW',          200,  'CW only'),
     (6, 'US', 5, 7025000, 7125000, 'CW',          200,  'CW only');
 
--- 30m: no phone or image anywhere, 200 W limit
-INSERT INTO band_segments (band_id, country, class_id, low_hz, high_hz, modes, max_power_w, notes) VALUES
-    (7, 'US', 1, 10100000, 10150000, 'CW,DATA', 200, 'No phone or image permitted'),
-    (7, 'US', 2, 10100000, 10150000, 'CW,DATA', 200, 'No phone or image permitted'),
-    (7, 'US', 3, 10100000, 10150000, 'CW,DATA', 200, 'No phone or image permitted');
-
 -- 20m
 INSERT INTO band_segments (band_id, country, class_id, low_hz, high_hz, modes, max_power_w, notes) VALUES
     (8, 'US', 1, 14000000, 14150000, 'CW,DATA',     NULL, NULL),
@@ -104,15 +167,6 @@ INSERT INTO band_segments (band_id, country, class_id, low_hz, high_hz, modes, m
     (8, 'US', 2, 14175000, 14350000, 'PHONE,IMAGE', NULL, NULL),
     (8, 'US', 3, 14025000, 14150000, 'CW,DATA',     NULL, NULL),
     (8, 'US', 3, 14225000, 14350000, 'PHONE,IMAGE', NULL, NULL);
-
--- 17m
-INSERT INTO band_segments (band_id, country, class_id, low_hz, high_hz, modes, max_power_w, notes) VALUES
-    (9, 'US', 1, 18068000, 18110000, 'CW,DATA',     NULL, NULL),
-    (9, 'US', 1, 18110000, 18168000, 'PHONE,IMAGE', NULL, NULL),
-    (9, 'US', 2, 18068000, 18110000, 'CW,DATA',     NULL, NULL),
-    (9, 'US', 2, 18110000, 18168000, 'PHONE,IMAGE', NULL, NULL),
-    (9, 'US', 3, 18068000, 18110000, 'CW,DATA',     NULL, NULL),
-    (9, 'US', 3, 18110000, 18168000, 'PHONE,IMAGE', NULL, NULL);
 
 -- 15m
 INSERT INTO band_segments (band_id, country, class_id, low_hz, high_hz, modes, max_power_w, notes) VALUES
@@ -124,15 +178,6 @@ INSERT INTO band_segments (band_id, country, class_id, low_hz, high_hz, modes, m
     (10, 'US', 3, 21275000, 21450000, 'PHONE,IMAGE', NULL, NULL),
     (10, 'US', 4, 21025000, 21200000, 'CW',          200,  'CW only'),
     (10, 'US', 5, 21025000, 21200000, 'CW',          200,  'CW only');
-
--- 12m
-INSERT INTO band_segments (band_id, country, class_id, low_hz, high_hz, modes, max_power_w, notes) VALUES
-    (11, 'US', 1, 24890000, 24930000, 'CW,DATA',     NULL, NULL),
-    (11, 'US', 1, 24930000, 24990000, 'PHONE,IMAGE', NULL, NULL),
-    (11, 'US', 2, 24890000, 24930000, 'CW,DATA',     NULL, NULL),
-    (11, 'US', 2, 24930000, 24990000, 'PHONE,IMAGE', NULL, NULL),
-    (11, 'US', 3, 24890000, 24930000, 'CW,DATA',     NULL, NULL),
-    (11, 'US', 3, 24930000, 24990000, 'PHONE,IMAGE', NULL, NULL);
 
 -- 10m: the only HF band with Technician phone privileges
 INSERT INTO band_segments (band_id, country, class_id, low_hz, high_hz, modes, max_power_w, notes) VALUES
@@ -146,17 +191,6 @@ INSERT INTO band_segments (band_id, country, class_id, low_hz, high_hz, modes, m
     (12, 'US', 4, 28300000, 28500000, 'PHONE',       200,  'Technician phone privileges'),
     (12, 'US', 5, 28100000, 28300000, 'CW,DATA',     200,  NULL),
     (12, 'US', 5, 28300000, 28500000, 'PHONE',       200,  NULL);
-
--- VHF/UHF and above: Technician and higher, full allocations
-INSERT INTO band_segments (band_id, country, class_id, low_hz, high_hz, modes, max_power_w, notes) VALUES
-    (13, 'US', 4, 50000000,   50100000,   'CW',                    NULL, 'CW only below 50.1 MHz'),
-    (13, 'US', 4, 50100000,   54000000,   'CW,DATA,PHONE,IMAGE',   NULL, NULL),
-    (14, 'US', 4, 144000000,  144100000,  'CW',                    NULL, 'CW only below 144.1 MHz'),
-    (14, 'US', 4, 144100000,  148000000,  'CW,DATA,PHONE,IMAGE',   NULL, NULL),
-    (15, 'US', 4, 222000000,  225000000,  'CW,DATA,PHONE,IMAGE',   NULL, NULL),
-    (16, 'US', 4, 420000000,  450000000,  'CW,DATA,PHONE,IMAGE',   NULL, 'Geographic restrictions apply near some radar sites'),
-    (17, 'US', 4, 902000000,  928000000,  'CW,DATA,PHONE,IMAGE',   NULL, 'Secondary allocation, shared with Part 15 devices'),
-    (18, 'US', 4, 1240000000, 1300000000, 'CW,DATA,PHONE,IMAGE',   NULL, NULL);
 
 -- ---------------------------------------------------------------------------
 -- IARU allocation extents (class_id NULL = the allocation, not privileges)

@@ -71,7 +71,7 @@ static size_t morse_utf8_trim(const char* s, size_t max) {
 }
 
 // Instant command: runs on the gateway thread, sends a fresh response.
-void hammy_cmd_morse(const hammy_job_t* job, struct discord* client, const hammy_refdb_t* refdb) {
+void hammy_cmd_morse(const hammy_job_t* job, struct discord* client, hammy_refdb_t* refdb) {
     // Get the text argument from the job
     const char* text = hammy_job_get_arg(job, "text");
     if (!text) {
