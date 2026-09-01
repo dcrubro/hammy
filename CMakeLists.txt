@@ -246,7 +246,9 @@ else()
             hammy_append_supported_c_flags(HAMMY_ANALYZER_FLAGS
                 -fanalyzer-verbosity=${ANALYZER_VERBOSITY}
                 -fanalyzer
-            )
+		--param=analyzer-checker=taint
+            	--Wanalyzer-too-complex
+	    )
         endif()
     elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
         # Clang-only diagnostics. Clang has no in-compiler equivalent of
