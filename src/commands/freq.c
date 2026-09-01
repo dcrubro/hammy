@@ -7,6 +7,7 @@
 #include <stdarg.h>
 
 #include <hammy/command.h>
+#include <hammy/commands.h>
 #include <hammy/job.h>
 #include <hammy/refdb.h>
 

@@ -196,6 +196,8 @@ static bool prepare(sqlite3* h, const char* sql, sqlite3_stmt** out) {
     return true;
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wjump-misses-init" // suppresses the "jumped initialization of varaible" warning, has no effect here
 hammy_refdb_t* hammy_refdb_open(const char* path) {
     if (!path) { return NULL; }
 
@@ -272,6 +274,7 @@ fail:
     hammy_refdb_close(&db);
     return NULL;
 }
+#pragma GCC diagnostic pop
 
 bool hammy_refdb_close(hammy_refdb_t** db) {
     if (!db || !(*db)) { return false; }

@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include <hammy/command.h>
+#include <hammy/commands.h>
 #include <hammy/job.h>
 
 // Discord epoch, for turning a snowflake back into a wall-clock time.

@@ -2,16 +2,11 @@
 #include <string.h>
 
 #include <hammy/command.h>
+#include <hammy/commands.h> // Table
 
 // Handlers live in src/hammy/commands/. Declared here rather than in a header
 // so adding a command touches exactly two places: its own .c file and this
 // table.
-void hammy_cmd_ping(const hammy_job_t* job, struct discord* client, hammy_refdb_t* refdb);      // Ping
-void hammy_cmd_morse(const hammy_job_t* job, struct discord* client, hammy_refdb_t* refdb);     // Text -> Morse
-void hammy_cmd_freq(const hammy_job_t* job, struct discord* client, hammy_refdb_t* refdb);      // Frequency lookup
-void hammy_cmd_q(const hammy_job_t* job, struct discord* client, hammy_refdb_t* refdb);         // Q-Code lookup
-void hammy_cmd_abbr(const hammy_job_t* job, struct discord* client, hammy_refdb_t* refdb);      // Abbreviation lookup
-void hammy_cmd_phonetic(const hammy_job_t* job, struct discord* client, hammy_refdb_t* refdb);  // Callsign -> Phonetics
 
 // TODO: Temporary - move to a proper options system; e.g. a vector of heap-allocated options or something. For now, just point at static storage.
 static struct discord_application_command_option morse_opts[] = {

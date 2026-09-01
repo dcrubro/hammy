@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include <hammy/command.h>
+#include <hammy/commands.h>
 #include <hammy/job.h>
 #include <hammy/refdb.h>
 
@@ -28,7 +29,7 @@
 // invalid JSON.
 static bool morse_append(char* buf, size_t cap, size_t* len, bool gap, const char* token) {
     size_t n = strlen(token);
-    size_t need = (*len > 0 ? 1 : 0) + (gap ? 2 : 0) + n;
+    size_t need = (*len > 0 ? 1u : 0u) + (gap ? 2u : 0u) + n;
 
     if (*len + need + 1 > cap) { return false; }
 
