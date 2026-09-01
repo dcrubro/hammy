@@ -53,17 +53,14 @@ static bool phonetic_is_gap(char c) {
 
 // Instant command: runs on the gateway thread, sends a fresh response.
 void hammy_cmd_phonetic(const hammy_job_t* job, struct discord* client, hammy_refdb_t* refdb) {
-    // Get the callsign argument from the job
-    const char* text = hammy_job_get_arg(job, "callsign");
+    // Get the text argument from the job
+    const char* text = hammy_job_get_arg(job, "text");
     if (!text) {
-        hammy_job_respond(job, client, "Callsign Missing!", "No Callsign provided for Phonetic conversion.", true);
+        hammy_job_respond(job, client, "Text Missing!", "No Text provided for Phonetic conversion.", true);
         return;
     }
 
-    if (strlen(text) > 12) { // Arbitrary limit to prevent abuse and ensure reasonable output size
-        hammy_job_respond(job, client, "Callsign Too Long!", "The provided Callsign exceeds the maximum allowed length.", true);
-        return;
-    }
+    bool showPronunciation = strlen(text) < 12;
 
     char phonetic[HAMMY_PHONETIC_CODE_MAX + sizeof(HAMMY_PHONETIC_TRUNCATED)];
     char pronunciation[HAMMY_PHONETIC_PRONUNCIATION_MAX + sizeof(HAMMY_PHONETIC_TRUNCATED)];
@@ -131,7 +128,11 @@ void hammy_cmd_phonetic(const hammy_job_t* job, struct discord* client, hammy_re
 
     // Reply with the phonetic words and how each of them is spoken.
     char body[sizeof(phonetic) + sizeof(pronunciation) + 48];
-    snprintf(body, sizeof(body), "Callsign: `%s`\nPhonetics: `%s`\nPronunciation: `%s`", text, phonetic, pronunciation);
+    if (showPronunciation) {
+        snprintf(body, sizeof(body), "Text: `%s`\nPhonetics: `%s`\nPronunciation: `%s`", text, phonetic, pronunciation);
+    } else {
+        snprintf(body, sizeof(body), "Text: `(truncated)`\nPhonetics: `%s`", phonetic);
+    }
 
-    hammy_job_respond(job, client, "Phonetic Code Conversion", body, false);
+    hammy_job_respond(job, client, "Text to Phonetics Conversion", body, false);
 }
