@@ -90,6 +90,10 @@ static const char SQL_COUNTRY_KNOWN[] =
 static const char SQL_QCODE[] =
     "SELECT question, answer FROM qcodes WHERE code = UPPER(?1) LIMIT 1";
 
+// Resolve character to phonetic
+static const char SQL_PHONETIC[] =
+    "SELECT word, pronunciation FROM phonetics WHERE letter = UPPER(?1) LIMIT 1"
+
 // Authorizer: the connection may read, and nothing else.
 //
 // SQLITE_OPEN_READONLY protects the MAIN database file. It does not stop
@@ -143,6 +147,7 @@ static const hammy_stmt_def_t HAMMY_STATEMENTS[] = {
     HAMMY_STMT(stPrefix,       SQL_PREFIX),
     HAMMY_STMT(stMorse,        SQL_MORSE),
     HAMMY_STMT(stQCode,        SQL_QCODE),
+    HAMMY_STMT(stPhonetic,     SQL_PHONETIC),
     HAMMY_STMT(stFreqMain,     SQL_FREQ_MAIN),
     HAMMY_STMT(stFreqIaru,     SQL_FREQ_IARU),
     HAMMY_STMT(stFreqNearest,  SQL_FREQ_NEAREST),
@@ -447,6 +452,48 @@ bool hammy_refdb_get_morse(hammy_refdb_t* db, char c, const char** out) {
     }
 
     sqlite3_reset(db->stMorse);
+
+    return hit;
+}
+
+bool hammy_refdb_get_phonetic(hammy_refdb_t* db, char c, const char** out, const char** outPronunciation) {
+    if (!db || !out) { return false; }
+
+    sqlite3_stmt* const needed[] = { db->stPhonetic };
+    if (!stmts_ready("phonetic", needed, 1)) { return false; }
+
+    // The table is ASCII (ITU-R M.1677-1 has no non-Latin extensions), and a
+    // single byte out of a multi-byte UTF-8 sequence is not valid text to bind,
+    // so anything with the high bit set is a miss without touching SQLite.
+    if ((unsigned char)c & 0x80u) { return false; }
+
+    // Run the query with the character as a string. SQLite's UPPER() handles case-insensitivity.
+    // SQLITE_STATIC is safe because the statement is reset before this returns,
+    // so key never outlives the binding that points at it.
+    char key[2] = { c, '\0' };
+
+    sqlite3_reset(db->stPhonetic);
+    sqlite3_clear_bindings(db->stPhonetic);
+    sqlite3_bind_text(db->stPhonetic, 1, key, 1, SQLITE_STATIC);
+
+    bool hit = false;
+
+    if (sqlite3_step(db->stPhonetic) == SQLITE_ROW) {
+        const unsigned char* code = sqlite3_column_text(db->stPhonetic, 0);
+        const unsigned char* codePronunciation = sqlite3_column_text(db->stPhonetic, 1);
+
+        if (code && codePronunciation) {
+            // Copied rather than handed back directly: the column pointer dies
+            // at the reset below, and the caller has no way to know that.
+            snprintf(db->phoneticCode, sizeof(db->phoneticCode), "%s", (const char*)code);
+            *out = db->phoneticCode;
+            snprintf(db->phoneticCodePronunciation, sizeof(db->phoneticCodePronunciation), "%s", (const char*)codePronunciation);
+            *outPronunciation = db->phoneticCodePronunciation;
+            hit = true;
+        }
+    }
+
+    sqlite3_reset(db->stPhonetic);
 
     return hit;
 }

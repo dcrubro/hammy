@@ -10,6 +10,7 @@ void hammy_cmd_ping(const hammy_job_t* job, struct discord* client, hammy_refdb_
 void hammy_cmd_morse(const hammy_job_t* job, struct discord* client, hammy_refdb_t* refdb);
 void hammy_cmd_freq(const hammy_job_t* job, struct discord* client, hammy_refdb_t* refdb);
 void hammy_cmd_q(const hammy_job_t* job, struct discord* client, hammy_refdb_t* refdb);
+void hammy_cmd_phonetic(const hammy_job_t* job, struct discord* client, hammy_refdb_t* refdb);
 
 // TODO: Temporary - move to a proper options system; e.g. a vector of heap-allocated options or something. For now, just point at static storage.
 static struct discord_application_command_option morse_opts[] = {
@@ -44,6 +45,16 @@ static struct discord_application_command_options q_opts_struct = {
     .array = q_opts
 };
 
+static struct discord_application_command_option phonetic_opts[] = {
+    { .type = DISCORD_APPLICATION_OPTION_STRING, .name = "callsign",
+      .description = "Callsign to convert to Phonetics", .required = true },
+};
+
+static struct discord_application_command_options phonetic_opts_struct = {
+    .size = 1,
+    .array = phonetic_opts
+};
+
 // The command table. Pure data - no allocation, no lifetime, no destructor.
 // Copying an entry into the bot's vector is a plain struct copy, and the vector
 // may be created with a NULL destructor hook.
@@ -53,7 +64,8 @@ static const hammy_command_t hammy_builtin_commands[] = {
     { "ping", "Check whether Hammy is alive and how fast it is responding", NULL, &hammy_cmd_ping, true },
     { "morse", "Text to and from Morse code", &morse_opts_struct, &hammy_cmd_morse, true },
     { "freq", "Band, segment and who can transmit", &freq_opts_struct, &hammy_cmd_freq, true },
-    { "q", "Convert Q-Code to the corresponding question and answer", &q_opts_struct, &hammy_cmd_q, true }
+    { "q", "Convert Q-Code to the corresponding question and answer", &q_opts_struct, &hammy_cmd_q, true },
+    { "phonetic", "Convert Callsign to Phonetics", &phonetic_opts_struct, &hammy_cmd_phonetic, true }
 
     // Tier 0 commands go here as they land. All pure computation, so instant:
     //   { "grid",  "Maidenhead locator conversions", &grid_opts,  &hammy_cmd_grid,  true },

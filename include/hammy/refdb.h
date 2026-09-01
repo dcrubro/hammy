@@ -21,6 +21,9 @@
 // Longest code in the morse table is '$' ('...-..-'), seven characters.
 #define HAMMY_MORSE_MAX 16
 
+// Longest Phonetic code. Fuck it, 32 characters
+#define HAMMY_PHONETIC_MAX 32
+
 // The current longest string in the qcodes table is 42; 128 is pretty generous. TODO: Change this if the qcodes table ever changes
 #define HAMMY_QCODE_MAX 128
 
@@ -37,6 +40,7 @@ struct hammy_refdb_t {
     sqlite3_stmt* stPrefix;
     sqlite3_stmt* stMorse;
     sqlite3_stmt* stQCode;
+    sqlite3_stmt* stPhonetic;
     sqlite3_stmt* stFreqMain;
     sqlite3_stmt* stFreqIaru;
     sqlite3_stmt* stFreqNearest;
@@ -45,6 +49,9 @@ struct hammy_refdb_t {
     sqlite3_stmt* stCountryList;
 
     char morseCode[HAMMY_MORSE_MAX]; // Scratch for the last hammy_refdb_get_morse() hit
+
+    char phoneticCode[HAMMY_PHONETIC_MAX];
+    char phoneticCodePronunciation[HAMMY_PHONETIC_MAX];
 
     char qcodeQuestion[HAMMY_QCODE_MAX]; // Scratch for the last hammy_refdb_get_qcode() hit
     char qcodeAnswer[HAMMY_QCODE_MAX]; // Scratch for the last hammy_refdb_get_qcode() hit
@@ -153,6 +160,13 @@ bool hammy_refdb_dxcc(hammy_refdb_t* db, const char* callsign, hammy_dxcc_t* out
 // On a hit *out points at storage owned by the refdb and is only valid until
 // the NEXT call on the same handle - copy it if it has to outlive that.
 bool hammy_refdb_get_morse(hammy_refdb_t* db, char c, const char** out);
+
+// Looks up a character in the Phonetic table. Case-insensitive; non-ASCII bytes
+// never match. Returns false if not found, leaving *out untouched.
+//
+// On a hit *out points at storage owned by the refdb and is only valid until
+// the NEXT call on the same handle - copy it if it has to outlive that.
+bool hammy_refdb_get_phonetic(hammy_refdb_t* db, char c, const char** out, const char** outPronunciation);
 
 // Looks up a QSO code in the qcodes table. Case-insensitive; non-ASCII bytes
 // never match. Returns false if not found, leaving *out untouched.
