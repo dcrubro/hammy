@@ -6,20 +6,21 @@
 #include <hammy/command.h>
 #include <hammy/job.h>
 #include <hammy/refdb.h>
+#include <hammy/utils.h>
 
 // The reply goes out as an embed description, which Discord caps at 4096
 // characters, so the two halves get separate budgets that still leave room for
 // the labels between them. Capping at all is what keeps an unbounded,
 // user-controlled VLA off the stack: a command option runs to 6000 characters,
-// and every one of them can expand to eight.
-#define HAMMY_PHONETIC_ECHO_MAX 512
-#define HAMMY_PHONETIC_CODE_MAX 3072
+// and every one of them can expand to a whole word.
+#define HAMMY_PHONETIC_CODE_MAX 1536
+#define HAMMY_PHONETIC_PRONUNCIATION_MAX 1536
 #define HAMMY_PHONETIC_TRUNCATED " ... (truncated)"
 
 // Appends one token, space-separated from whatever is already in the buffer and
 // optionally preceded by a word-gap slash. All or nothing: returns false and
 // leaves the buffer untouched when the whole thing would not fit, so the caller
-// can stop without a half-written character on the end.
+// can stop without a half-written word on the end.
 //
 // len counts bytes excluding the terminator, and the buffer stays terminated
 // throughout - which is what the strcat-onto-uninitialised-stack version this
@@ -50,72 +51,63 @@ static bool phonetic_is_gap(char c) {
     return c == ' ' || c == '\t' || c == '\n' || c == '\r';
 }
 
-// How many bytes of s can be kept without exceeding max OR splitting a UTF-8
-// sequence. Half a sequence would make the JSON body invalid and cost the whole
-// reply, so the cut walks back to the nearest lead byte.
-//
-// Only the echoed input needs this - the generated code is all ASCII.
-static size_t phonetic_utf8_trim(const char* s, size_t max) {
-    size_t n = strlen(s);
-    if (n <= max) { return n; }
-
-    // Continuation bytes are 10xxxxxx. Dropping back past them lands either on
-    // ASCII or on the lead byte of the sequence being cut, and that lead byte
-    // is then excluded too, since the kept range is [0, n).
-    n = max;
-    while (n > 0 && ((unsigned char)s[n] & 0xC0) == 0x80) { n--; }
-
-    return n;
-}
-
 // Instant command: runs on the gateway thread, sends a fresh response.
 void hammy_cmd_phonetic(const hammy_job_t* job, struct discord* client, hammy_refdb_t* refdb) {
-    // Get the text argument from the job
+    // Get the callsign argument from the job
     const char* text = hammy_job_get_arg(job, "callsign");
     if (!text) {
         hammy_job_respond(job, client, "Callsign Missing!", "No Callsign provided for Phonetic conversion.", true);
         return;
     }
 
-    // Echoed back trimmed rather than whole: sizing a buffer from the option
-    // would put an unbounded, user-controlled allocation on the stack.
-    char echo[HAMMY_PHONETIC_ECHO_MAX + sizeof(HAMMY_PHONETIC_TRUNCATED)];
-    size_t echoLen = morse_utf8_trim(text, HAMMY_PHONETIC_ECHO_MAX);
-
-    memcpy(echo, text, echoLen);
-    echo[echoLen] = '\0';
-
-    if (text[echoLen] != '\0') {
-        memcpy(echo + echoLen, HAMMY_PHONETIC_TRUNCATED, sizeof(HAMMY_PHONETIC_TRUNCATED));
+    if (strlen(text) > 12) { // Arbitrary limit to prevent abuse and ensure reasonable output size
+        hammy_job_respond(job, client, "Callsign Too Long!", "The provided Callsign exceeds the maximum allowed length.", true);
+        return;
     }
 
     char phonetic[HAMMY_PHONETIC_CODE_MAX + sizeof(HAMMY_PHONETIC_TRUNCATED)];
+    char pronunciation[HAMMY_PHONETIC_PRONUNCIATION_MAX + sizeof(HAMMY_PHONETIC_TRUNCATED)];
+
     phonetic[0] = '\0';
+    pronunciation[0] = '\0';
 
     // Room held back so the truncation note always fits.
-    const size_t cap = sizeof(phonetic) - (sizeof(HAMMY_PHONETIC_TRUNCATED) - 1);
+    const size_t phoneticCap = sizeof(phonetic) - (sizeof(HAMMY_PHONETIC_TRUNCATED) - 1);
+    const size_t pronunciationCap = sizeof(pronunciation) - (sizeof(HAMMY_PHONETIC_TRUNCATED) - 1);
 
-    size_t len = 0;
+    size_t phoneticLen = 0;
+    size_t pronunciationLen = 0;
     bool pendingGap = false;
     bool truncated = false;
 
     for (const char* p = text; *p; p++) {
-        // The morse table has no row for whitespace, and rendering it as an
+        // The phonetic table has no row for whitespace, and rendering it as an
         // unknown character would lose the word boundaries. Held rather than
         // emitted on the spot so leading, trailing and repeated spaces do not
         // stack up slashes.
-        if (morse_is_gap(*p)) {
-            pendingGap = (len > 0);
+        if (phonetic_is_gap(*p)) {
+            pendingGap = (phoneticLen > 0);
             continue;
         }
 
         const char* code = NULL;
         const char* codePronunciation = NULL;
         if (!hammy_refdb_get_phonetic(refdb, *p, &code, &codePronunciation)) {
+            // Both halves get a placeholder: leaving the pronunciation at NULL
+            // would hand strlen() a null pointer on the next append.
             code = "?"; // Handle unknown characters
+            codePronunciation = "?";
         }
 
-        if (!phonetic_append(phonetic, cap, &len, pendingGap, code)) {
+        // The two halves are read side by side, so they have to stay on the same
+        // character. A word that fits in one buffer but not the other is rolled
+        // back out of the first rather than left to skew the columns.
+        size_t phoneticMark = phoneticLen;
+
+        if (!phonetic_append(phonetic, phoneticCap, &phoneticLen, pendingGap, code) ||
+            !phonetic_append(pronunciation, pronunciationCap, &pronunciationLen, pendingGap, codePronunciation)) {
+            phoneticLen = phoneticMark;
+            phonetic[phoneticLen] = '\0';
             truncated = true;
             break;
         }
@@ -125,18 +117,21 @@ void hammy_cmd_phonetic(const hammy_job_t* job, struct discord* client, hammy_re
 
     // All whitespace, or an empty string: Discord refuses an empty body, so
     // there is nothing to send back.
-    if (len == 0) {
+    if (phoneticLen == 0) {
         hammy_job_respond(job, client, "Error", "Nothing to convert.", true);
         return;
     }
 
     if (truncated) {
-        memcpy(phonetic + len, HAMMY_PHONETIC_TRUNCATED, sizeof(HAMMY_PHONETIC_TRUNCATED));
+        memcpy(phonetic + phoneticLen, HAMMY_PHONETIC_TRUNCATED, sizeof(HAMMY_PHONETIC_TRUNCATED));
+        memcpy(pronunciation + pronunciationLen, HAMMY_PHONETIC_TRUNCATED, sizeof(HAMMY_PHONETIC_TRUNCATED));
     }
 
-    // Reply with the converted Phonetic code, alongside the text it came from.
-    char body[sizeof(echo) + sizeof(phonetic) + 32];
-    snprintf(body, sizeof(body), "Original text: `%s`\nPhonetic: `%s`", echo, phonetic);
+    hammy_to_uppercase(text);
+
+    // Reply with the phonetic words and how each of them is spoken.
+    char body[sizeof(phonetic) + sizeof(pronunciation) + 48];
+    snprintf(body, sizeof(body), "Callsign: `%s`\nPhonetics: `%s`\nPronunciation: `%s`", text, phonetic, pronunciation);
 
     hammy_job_respond(job, client, "Phonetic Code Conversion", body, false);
 }

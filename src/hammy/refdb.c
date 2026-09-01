@@ -92,7 +92,7 @@ static const char SQL_QCODE[] =
 
 // Resolve character to phonetic
 static const char SQL_PHONETIC[] =
-    "SELECT word, pronunciation FROM phonetics WHERE letter = UPPER(?1) LIMIT 1"
+    "SELECT word, pronunciation FROM phonetics WHERE letter = UPPER(?1) LIMIT 1";
 
 // Authorizer: the connection may read, and nothing else.
 //
