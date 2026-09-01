@@ -4,6 +4,14 @@ A Discord Bot for Ham/Amateur Radio
 Fun fact: The logo of Hammy is a function! It is: f(x) = e^(-x^2)sin(9x)
 
 ## Features
+Current features:
+- /freq &lt;frequency (MHz)&gt; [country (default: US)] - Show the band, segment and who can transmit (for that country).
+- /abbr &lt;abbreviation&gt; - Convert Abbreviation to Meaning and Context of Meaning.
+- /q &lt;q-code&gt; - Convert Q-Code to Question/Answer.
+- /phonetic &lt;text&gt; - Convert Text to Phonetics (useful for callsigns); If text is under 12 characters, also shows pronunciaction.
+- /morse &lt;text&gt; - Convert Text to Morse Code.
+- /ping - Ping the Bot.
+
 Currently in-development, many features planned!
 
 ## Architecture
