@@ -94,6 +94,10 @@ static const char SQL_QCODE[] =
 static const char SQL_PHONETIC[] =
     "SELECT word, pronunciation FROM phonetics WHERE letter = UPPER(?1) LIMIT 1";
 
+// Resolve abbr to meaning
+static const char SQL_ABBR[] =
+    "SELECT meaning, context FROM abbreviations WHERE abbr = UPPER(?1) LIMIT 1";
+
 // Authorizer: the connection may read, and nothing else.
 //
 // SQLITE_OPEN_READONLY protects the MAIN database file. It does not stop
@@ -148,6 +152,7 @@ static const hammy_stmt_def_t HAMMY_STATEMENTS[] = {
     HAMMY_STMT(stMorse,        SQL_MORSE),
     HAMMY_STMT(stQCode,        SQL_QCODE),
     HAMMY_STMT(stPhonetic,     SQL_PHONETIC),
+    HAMMY_STMT(stAbbr,         SQL_ABBR),
     HAMMY_STMT(stFreqMain,     SQL_FREQ_MAIN),
     HAMMY_STMT(stFreqIaru,     SQL_FREQ_IARU),
     HAMMY_STMT(stFreqNearest,  SQL_FREQ_NEAREST),
@@ -479,6 +484,12 @@ bool hammy_refdb_get_phonetic(hammy_refdb_t* db, char c, const char** out, const
     bool hit = false;
 
     if (sqlite3_step(db->stPhonetic) == SQLITE_ROW) {
+        if (sqlite3_column_count(db->stPhonetic) < 2) {
+            // Error
+            sqlite3_reset(db->stPhonetic);
+            return false;
+        }
+
         const unsigned char* code = sqlite3_column_text(db->stPhonetic, 0);
         const unsigned char* codePronunciation = sqlite3_column_text(db->stPhonetic, 1);
 
@@ -539,6 +550,51 @@ bool hammy_refdb_get_qcode(hammy_refdb_t* db, const char* code, const char** out
     }
 
     sqlite3_reset(db->stQCode);
+
+    return hit;
+}
+
+bool hammy_refdb_get_abbr(hammy_refdb_t* db, const char* code, const char** outStr, const char** outContext) {
+    if (!db || !code || !outStr || !outContext) { return false; }
+
+    sqlite3_stmt* const needed[] = { db->stAbbr };
+    if (!stmts_ready("qcodes", needed, 1)) { return false; }
+
+    // Read the get_morse comment, I ain't writing this again (entire string edition)
+    for (const char* p = code; *p != '\0'; p++) {
+        if ((unsigned char)*p & 0x80u) { return false; }
+    }
+
+    // Query the string
+    sqlite3_reset(db->stAbbr);
+    sqlite3_clear_bindings(db->stAbbr);
+    sqlite3_bind_text(db->stAbbr, 1, code, -1, SQLITE_TRANSIENT); // -1 tells SQLite to figure out the length itself (strlen() call - requires NULL term)
+
+    bool hit = false;
+
+    if (sqlite3_step(db->stAbbr) == SQLITE_ROW) {
+        if (sqlite3_column_count(db->stAbbr) < 2) { // Error
+            sqlite3_reset(db->stAbbr);
+            return false;
+        }
+
+        const unsigned char* meaningStr = sqlite3_column_text(db->stAbbr, 0);
+        const unsigned char* ctxStr = sqlite3_column_text(db->stAbbr, 1);
+
+        if (meaningStr) {
+            snprintf(db->abbrStr, sizeof(db->abbrStr), "%s", (const char*)meaningStr);
+            *outStr = db->abbrStr;
+            hit = true;
+        }
+        
+        if (ctxStr) {
+            snprintf(db->abbrCtx, sizeof(db->abbrCtx), "%s", (const char*)ctxStr);
+            *outContext = db->abbrCtx;
+            hit = true;
+        }
+    }
+
+    sqlite3_reset(db->stAbbr);
 
     return hit;
 }

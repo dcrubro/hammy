@@ -46,6 +46,16 @@ static struct discord_application_command_options q_opts_struct = {
     .array = q_opts
 };
 
+static struct discord_application_command_option abbr_opts[] = {
+    { .type = DISCORD_APPLICATION_OPTION_STRING, .name = "abbreviation",
+      .description = "Abbreviation to convert to Meaning", .required = true },
+};
+
+static struct discord_application_command_options abbr_opts_struct = {
+    .size = 1,
+    .array = abbr_opts
+};
+
 static struct discord_application_command_option phonetic_opts[] = {
     { .type = DISCORD_APPLICATION_OPTION_STRING, .name = "text",
       .description = "Text to convert to Phonetics", .required = true },
@@ -66,7 +76,8 @@ static const hammy_command_t hammy_builtin_commands[] = {
     { "morse", "Text to and from Morse code", &morse_opts_struct, &hammy_cmd_morse, true },
     { "freq", "Band, segment and who can transmit", &freq_opts_struct, &hammy_cmd_freq, true },
     { "q", "Convert Q-Code to the corresponding question and answer", &q_opts_struct, &hammy_cmd_q, true },
-    { "phonetic", "Convert Text to Phonetics", &phonetic_opts_struct, &hammy_cmd_phonetic, true }
+    { "phonetic", "Convert Text to Phonetics", &phonetic_opts_struct, &hammy_cmd_phonetic, true },
+    { "abbr", "Convert Abbreviation to Meaning and Context", &abbr_opts_struct, &hammy_cmd_abbr, true }
 
     // Tier 0 commands go here as they land. All pure computation, so instant:
     //   { "grid",  "Maidenhead locator conversions", &grid_opts,  &hammy_cmd_grid,  true },

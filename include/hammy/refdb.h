@@ -27,6 +27,10 @@
 // The current longest string in the qcodes table is 42; 128 is pretty generous. TODO: Change this if the qcodes table ever changes
 #define HAMMY_QCODE_MAX 128
 
+// Abbreviations
+#define HAMMY_ABBR_LONGEST_STR 96
+#define HAMMY_ABBR_LONGEST_CTX 16
+
 // A country has at most a handful of licence classes, each with at most a
 // couple of segments covering one exact frequency. 24 is generous.
 #define HAMMY_FREQ_PRIVS_MAX 24
@@ -41,6 +45,7 @@ struct hammy_refdb_t {
     sqlite3_stmt* stMorse;
     sqlite3_stmt* stQCode;
     sqlite3_stmt* stPhonetic;
+    sqlite3_stmt* stAbbr;
     sqlite3_stmt* stFreqMain;
     sqlite3_stmt* stFreqIaru;
     sqlite3_stmt* stFreqNearest;
@@ -52,6 +57,9 @@ struct hammy_refdb_t {
 
     char phoneticCode[HAMMY_PHONETIC_MAX];
     char phoneticCodePronunciation[HAMMY_PHONETIC_MAX];
+
+    char abbrStr[HAMMY_ABBR_LONGEST_STR];
+    char abbrCtx[HAMMY_ABBR_LONGEST_CTX];
 
     char qcodeQuestion[HAMMY_QCODE_MAX]; // Scratch for the last hammy_refdb_get_qcode() hit
     char qcodeAnswer[HAMMY_QCODE_MAX]; // Scratch for the last hammy_refdb_get_qcode() hit
@@ -162,18 +170,25 @@ bool hammy_refdb_dxcc(hammy_refdb_t* db, const char* callsign, hammy_dxcc_t* out
 bool hammy_refdb_get_morse(hammy_refdb_t* db, char c, const char** out);
 
 // Looks up a character in the Phonetic table. Case-insensitive; non-ASCII bytes
-// never match. Returns false if not found, leaving *out untouched.
+// never match. Returns false if not found, leaving *out(s) untouched.
 //
 // On a hit *out points at storage owned by the refdb and is only valid until
 // the NEXT call on the same handle - copy it if it has to outlive that.
 bool hammy_refdb_get_phonetic(hammy_refdb_t* db, char c, const char** out, const char** outPronunciation);
 
 // Looks up a QSO code in the qcodes table. Case-insensitive; non-ASCII bytes
-// never match. Returns false if not found, leaving *out untouched.
+// never match. Returns false if not found, leaving *out(s) untouched.
 //
 // On a hit *out points at the storage owned by refdb and is only valid until
 // the NEXT call on the same handle - copy it if it has to outlive that.
 bool hammy_refdb_get_qcode(hammy_refdb_t* db, const char* code, const char** outQuestion, const char** outAnswer);
+
+// Looks up an abbreviation in the abbreviations table. Case-insensitive; non-ASCII bytes
+// never match. Returns false if not found, leaving *out(s) untouched.
+//
+// On a hit *out points at the storage owned by refdb and is only valid until
+// the NEXT call on the same handle - copy it if it has to outlive that.
+bool hammy_refdb_get_abbr(hammy_refdb_t* db, const char* code, const char** outStr, const char** outContext);
 
 // What band is freq_hz in, and who may transmit there.
 //

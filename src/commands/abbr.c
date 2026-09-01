@@ -14,26 +14,26 @@
 
 void hammy_cmd_abbr(const hammy_job_t* job, struct discord* client, hammy_refdb_t* refdb) {
     // Get the qcode argument from the job
-    const char* qcode = hammy_job_get_arg(job, "q-code");
-    if (!qcode) {
-        hammy_job_respond(job, client, "Error", "No text provided for Q-Code conversion.", true);
+    const char* abbr = hammy_job_get_arg(job, "abbreviation");
+    if (!abbr) {
+        hammy_job_respond(job, client, "Error", "No Abbreviation provided for Abbreviation conversion.", true);
         return;
     }
 
     char body[HAMMY_ABBR_CODE_MAX + sizeof(HAMMY_ABBR_TRUNCATED)]; // Generally, since the bottom pointers can only point to max 128-character strings (set as preprocesor header)
                                                                      // So yeah - if we ever change the above for some reason to stupid values... yeah. Technically "unsafe" but yeah.
 
-    const char* questionStr = NULL;
-    const char* answerStr = NULL;
+    const char* str = NULL;
+    const char* context = NULL;
 
-    if (!hammy_refdb_get_qcode(refdb, qcode, &questionStr, &answerStr)) {
-        hammy_job_respond(job, client, "Q-Code Not Found!", "Failed to find the Q-Code specified. Please check your query!", true);
+    if (!hammy_refdb_get_abbr(refdb, abbr, &str, &context)) {
+        hammy_job_respond(job, client, "Abbreviation Not Found!", "Failed to find the Abbreviation specified. Please check your query!", true);
         return;
     }
 
-    hammy_to_uppercase(qcode);
+    hammy_to_uppercase(abbr);
     
-    snprintf(body, sizeof(body), "Q-Code: `%s`\nQuestion: `%s`\nAnswer: `%s`", qcode, (questionStr ? questionStr : "Not Specified"), (answerStr ? answerStr : "Not Specified"));
+    snprintf(body, sizeof(body), "Abbreviation: `%s`\nMeaning: `%s`\nUsage Context: `%s`", abbr, (str ? str : "Not Specified"), (context ? context : "Not Specified"));
 
-    hammy_job_respond(job, client, "Q-Code Conversion", body, false);
+    hammy_job_respond(job, client, "Abbreviation Conversion", body, false);
 }

@@ -60,6 +60,11 @@ void hammy_cmd_phonetic(const hammy_job_t* job, struct discord* client, hammy_re
         return;
     }
 
+    if (strlen(text) >= 128) {
+        hammy_job_respond(job, client, "Text Too Long!", "Text provided is too long! Max. 128 characters.", true);
+        return;
+    }
+
     bool showPronunciation = strlen(text) < 12;
 
     char phonetic[HAMMY_PHONETIC_CODE_MAX + sizeof(HAMMY_PHONETIC_TRUNCATED)];
