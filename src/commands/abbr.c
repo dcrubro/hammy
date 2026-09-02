@@ -32,7 +32,7 @@ void hammy_cmd_abbr(const hammy_job_t* job, struct discord* client, hammy_refdb_
         return;
     }
 
-    hammy_to_uppercase(abbr);
+    hammy_to_uppercase((char*)abbr);
     
     snprintf(body, sizeof(body), "Abbreviation: `%s`\nMeaning: `%s`\nUsage Context: `%s`", abbr, (str ? str : "Not Specified"), (context ? context : "Not Specified"));
 

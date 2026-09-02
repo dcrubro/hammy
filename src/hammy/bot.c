@@ -52,7 +52,7 @@ static void hammy_bot_on_interaction(struct discord* client, const struct discor
             code = discord_create_interaction_response(client, event->id, event->token, &params, NULL);
         } else {
             params.data = &(struct discord_interaction_callback_data){
-                .content = "I don't know that command!"
+                .content = (char*)"I don't know that command!"
             };
 
             code = discord_create_interaction_response(client, event->id, event->token, &params, NULL);

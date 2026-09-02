@@ -8,11 +8,11 @@
 static inline bool hammy_embeds_genericerror(struct discord *client, struct discord_embed *out) {
     if (!out || !client) { return false; }
 
-    static struct discord_embed_footer footer = { .text = "Hammy Bot" };
+    static struct discord_embed_footer footer = { .text = (char*)"Hammy Bot" };
 
     out[0] = (struct discord_embed){
-        .title = "An Error Occurred",
-        .description = "An error occurred while processing your request.",
+        .title = (char*)"An Error Occurred",
+        .description = (char*)"An error occurred while processing your request.",
         .color = 0xFF0000,
         .timestamp = discord_timestamp(client),
         .footer = &footer,
@@ -26,8 +26,8 @@ static inline bool hammy_embeds_genericerror(struct discord *client, struct disc
 static inline bool hammy_embeds_customerror(struct discord *client,
                                             struct discord_embed *out,
                                             struct discord_embed_fields *fieldsOut,
-                                            char *title,
-                                            char *description,
+                                            const char *title,
+                                            const char *description,
                                             struct discord_embed_field *fields,
                                             int fieldCount)
 {
@@ -35,7 +35,7 @@ static inline bool hammy_embeds_customerror(struct discord *client,
     if (fieldCount < 0 || (fieldCount > 0 && !fields)) { return false; }
     if (fieldCount > 0 && !fieldsOut) { return false; }
 
-    static struct discord_embed_footer footer = { .text = "Hammy Bot" };
+    static struct discord_embed_footer footer = { .text = (char*)"Hammy Bot" };
 
     if (fieldCount > 0) {
         *fieldsOut = (struct discord_embed_fields){
@@ -45,8 +45,8 @@ static inline bool hammy_embeds_customerror(struct discord *client,
     }
 
     out[0] = (struct discord_embed){
-        .title = title,
-        .description = description,
+        .title = (char*)title,
+        .description = (char*)description,
         .color = 0xFF0000,
         .timestamp = discord_timestamp(client),
         .footer = &footer,
@@ -61,8 +61,8 @@ static inline bool hammy_embeds_customerror(struct discord *client,
 static inline bool hammy_embeds_customembed(struct discord *client,
                                               struct discord_embed *out,
                                               struct discord_embed_fields *fieldsOut,
-                                              char *title,
-                                              char *description,
+                                              const char *title,
+                                              const char *description,
                                               struct discord_embed_field *fields,
                                               int fieldCount,
                                               int color)
@@ -71,7 +71,7 @@ static inline bool hammy_embeds_customembed(struct discord *client,
     if (fieldCount < 0 || (fieldCount > 0 && !fields)) { return false; }
     if (fieldCount > 0 && !fieldsOut) { return false; }
 
-    static struct discord_embed_footer footer = { .text = "Hammy Bot" };
+    static struct discord_embed_footer footer = { .text = (char*)"Hammy Bot" };
 
     if (fieldCount > 0) {
         *fieldsOut = (struct discord_embed_fields){
@@ -81,8 +81,8 @@ static inline bool hammy_embeds_customembed(struct discord *client,
     }
 
     out[0] = (struct discord_embed){
-        .title = title,
-        .description = description,
+        .title = (char*)title,
+        .description = (char*)description,
         .color = color,
         .timestamp = discord_timestamp(client),
         .footer = &footer,

@@ -10,8 +10,8 @@
 
 // TODO: Temporary - move to a proper options system; e.g. a vector of heap-allocated options or something. For now, just point at static storage.
 static struct discord_application_command_option morse_opts[] = {
-    { .type = DISCORD_APPLICATION_OPTION_STRING, .name = "text",
-      .description = "Text to convert to Morse code", .required = true },
+    { .type = DISCORD_APPLICATION_OPTION_STRING, .name = (char*)"text",
+      .description = (char*)"Text to convert to Morse code", .required = true },
 };
 
 static struct discord_application_command_options morse_opts_struct = {
@@ -20,10 +20,10 @@ static struct discord_application_command_options morse_opts_struct = {
 };
 
 static struct discord_application_command_option freq_opts[] = {
-    { .type = DISCORD_APPLICATION_OPTION_STRING, .name = "frequency",
-      .description = "Frequency in MHz", .required = true },
-    { .type = DISCORD_APPLICATION_OPTION_STRING, .name = "country",
-       .description = "Country code to look up (e.g. US) - Defaults to US if none specified.", .required = false },
+    { .type = DISCORD_APPLICATION_OPTION_STRING, .name = (char*)"frequency",
+      .description = (char*)"Frequency in MHz", .required = true },
+    { .type = DISCORD_APPLICATION_OPTION_STRING, .name = (char*)"country",
+       .description = (char*)"Country code to look up (e.g. US) - Defaults to US if none specified.", .required = false },
 };
 
 static struct discord_application_command_options freq_opts_struct = {
@@ -32,8 +32,8 @@ static struct discord_application_command_options freq_opts_struct = {
 };
 
 static struct discord_application_command_option q_opts[] = {
-    { .type = DISCORD_APPLICATION_OPTION_STRING, .name = "q-code",
-      .description = "Q-Code to convert to Question/Answer", .required = true },
+    { .type = DISCORD_APPLICATION_OPTION_STRING, .name = (char*)"q-code",
+      .description = (char*)"Q-Code to convert to Question/Answer", .required = true },
 };
 
 static struct discord_application_command_options q_opts_struct = {
@@ -42,8 +42,8 @@ static struct discord_application_command_options q_opts_struct = {
 };
 
 static struct discord_application_command_option abbr_opts[] = {
-    { .type = DISCORD_APPLICATION_OPTION_STRING, .name = "abbreviation",
-      .description = "Abbreviation to convert to Meaning", .required = true },
+    { .type = DISCORD_APPLICATION_OPTION_STRING, .name = (char*)"abbreviation",
+      .description = (char*)"Abbreviation to convert to Meaning", .required = true },
 };
 
 static struct discord_application_command_options abbr_opts_struct = {
@@ -52,8 +52,8 @@ static struct discord_application_command_options abbr_opts_struct = {
 };
 
 static struct discord_application_command_option phonetic_opts[] = {
-    { .type = DISCORD_APPLICATION_OPTION_STRING, .name = "text",
-      .description = "Text to convert to Phonetics", .required = true },
+    { .type = DISCORD_APPLICATION_OPTION_STRING, .name = (char*)"text",
+      .description = (char*)"Text to convert to Phonetics", .required = true },
 };
 
 static struct discord_application_command_options phonetic_opts_struct = {

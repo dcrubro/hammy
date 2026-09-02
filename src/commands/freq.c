@@ -30,7 +30,10 @@ static void sb_addf(hammy_sb_t* sb, const char* fmt, ...) {
  
     va_list ap;
     va_start(ap, fmt);
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wformat-nonliteral"
     int n = vsnprintf(sb->buf + sb->len, sb->cap - sb->len, fmt, ap);
+    #pragma clang diagnostic pop
     va_end(ap);
  
     if (n < 0) {

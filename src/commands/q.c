@@ -32,7 +32,7 @@ void hammy_cmd_q(const hammy_job_t* job, struct discord* client, hammy_refdb_t* 
         return;
     }
 
-    hammy_to_uppercase(qcode);
+    hammy_to_uppercase((char*)qcode);
     
     snprintf(body, sizeof(body), "Q-Code: `%s`\nQuestion: `%s`\nAnswer: `%s`", qcode, (questionStr ? questionStr : "Not Specified"), (answerStr ? answerStr : "Not Specified"));
 

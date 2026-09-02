@@ -130,7 +130,7 @@ void hammy_cmd_phonetic(const hammy_job_t* job, struct discord* client, hammy_re
         memcpy(pronunciation + pronunciationLen, HAMMY_PHONETIC_TRUNCATED, sizeof(HAMMY_PHONETIC_TRUNCATED));
     }
 
-    hammy_to_uppercase(text);
+    hammy_to_uppercase((char*)text);
 
     // Reply with the phonetic words and how each of them is spoken.
     char body[sizeof(phonetic) + sizeof(pronunciation) + 48];
