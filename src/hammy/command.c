@@ -61,6 +61,15 @@ static struct discord_application_command_options phonetic_opts_struct = {
     .array = phonetic_opts
 };
 
+static struct discord_application_command_option dxcc_opts[] = {
+    { .type = DISCORD_APPLICATION_OPTION_STRING, .name = (char*)"callsign",
+      .description = (char*)"Callsign or prefix to look up", .required = true },
+    { .type = DISCORD_APPLICATION_OPTION_STRING, .name = (char*)"grid",
+      .description = (char*)"Your Maidenhead locator, for distance and bearing", .required = false },
+};
+
+static struct discord_application_command_options dxcc_opts_struct = { .size = 2, .array = dxcc_opts };
+
 // The command table. Pure data - no allocation, no lifetime, no destructor.
 // Copying an entry into the bot's vector is a plain struct copy, and the vector
 // may be created with a NULL destructor hook.
@@ -72,6 +81,7 @@ static const hammy_command_t hammy_builtin_commands[] = {
     { "freq", "Band, segment and who can transmit", &freq_opts_struct, &hammy_cmd_freq, true },
     { "q", "Convert Q-Code to the corresponding question and answer", &q_opts_struct, &hammy_cmd_q, true },
     { "phonetic", "Convert Text to Phonetics", &phonetic_opts_struct, &hammy_cmd_phonetic, true },
+    { "dxcc", "Look up the DXCC entity for a callsign", &dxcc_opts_struct, &hammy_cmd_dxcc, true },
     { "abbr", "Convert Abbreviation to Meaning and Context", &abbr_opts_struct, &hammy_cmd_abbr, true }
 
     // Tier 0 commands go here as they land. All pure computation, so instant:

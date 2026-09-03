@@ -195,9 +195,9 @@ void hammy_cmd_freq(const hammy_job_t* job, struct discord* client, hammy_refdb_
 
     // Boundary warnings
     if (r.atBandEdge) {
-        sb_addf(&sb, "\n> This is exactly the band edge. A signal of any width centred here extends outside the band.\n");
+        sb_addf(&sb, "\n> This is exactly the band edge. A signal of any width centerd here extends outside the band.\n");
     } else if (r.atSegmentEdge) {
-        sb_addf(&sb, "\n> This is exactly a segment boundary, so a signal centred here straddles both sides.\n");
+        sb_addf(&sb, "\n> This is exactly a segment boundary, so a signal centerd here straddles both sides.\n");
     }
  
     if (sb.overflow) {

@@ -11,5 +11,6 @@ void hammy_cmd_freq(const hammy_job_t* job, struct discord* client, hammy_refdb_
 void hammy_cmd_q(const hammy_job_t* job, struct discord* client, hammy_refdb_t* refdb);         // Q-Code lookup
 void hammy_cmd_abbr(const hammy_job_t* job, struct discord* client, hammy_refdb_t* refdb);      // Abbreviation lookup
 void hammy_cmd_phonetic(const hammy_job_t* job, struct discord* client, hammy_refdb_t* refdb);  // Callsign -> Phonetics
+void hammy_cmd_dxcc(const hammy_job_t* job, struct discord* client, hammy_refdb_t* refdb);      // Callsign + Grid -> DXCC
 
 #endif

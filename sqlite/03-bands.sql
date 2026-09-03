@@ -86,7 +86,7 @@ SELECT v.band_id, 'US', lc.id, v.low_hz, v.high_hz, v.modes, v.max_power_w, v.no
  WHERE lc.country = 'US' AND lc.rank >= 30;
 
 -- 60m: five discrete channels, General and above. Stored as channel-width
--- ranges; the USB dial frequency is the channel centre minus 1.5 kHz.
+-- ranges; the USB dial frequency is the channel center minus 1.5 kHz.
 INSERT INTO band_segments (band_id, country, class_id, low_hz, high_hz, modes, max_power_w, notes)
 SELECT 5, 'US', lc.id, v.low_hz, v.high_hz, 'CW,DATA,PHONE', NULL, v.notes
   FROM license_classes lc

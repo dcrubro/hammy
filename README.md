@@ -10,6 +10,7 @@ Current features:
 - /q &lt;q-code&gt; - Convert Q-Code to Question/Answer.
 - /phonetic &lt;text&gt; - Convert Text to Phonetics (useful for callsigns); If text is under 12 characters, also shows pronunciaction.
 - /morse &lt;text&gt; - Convert Text to Morse Code.
+- /dxcc &lt;callsign&gt; [grid (maidenhead locator)] - Show the DXCC Entity of a Callsign.
 - /ping - Ping the Bot.
 
 Currently in-development, many features planned!

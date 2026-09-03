@@ -821,7 +821,7 @@ bool hammy_refdb_freq(hammy_refdb_t* db, int64_t freqHz, const char* country,
     sqlite3_reset(st);
  
     // Sitting exactly on a segment boundary is worth flagging: a signal of any
-    // width centred there straddles both sides.
+    // width centerd there straddles both sides.
     st = db->stFreqSegEdge;
     sqlite3_reset(st);
     sqlite3_clear_bindings(st);

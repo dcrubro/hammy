@@ -111,7 +111,7 @@ struct hammy_freq_t {
     int64_t bandHighHz;
  
     // The frequency sits exactly on a band or segment boundary. Worth saying
-    // out loud: a signal of any width centred there straddles both sides.
+    // out loud: a signal of any width centerd there straddles both sides.
     bool atBandEdge;
     bool atSegmentEdge;
  
