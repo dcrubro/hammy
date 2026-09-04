@@ -18,6 +18,8 @@
 static double deg_to_rad(double deg) { return deg * HAMMY_PI / 180.0; }
 static double rad_to_deg(double rad) { return rad * 180.0 / HAMMY_PI; }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wbad-function-cast" // suppresses the dumb floor() cast to int warning
 bool hammy_grid_from_latlon(double lat, double lon, int precision, char* out, size_t cap) {
     if (!out || cap < 3) { return false; }
     if (lat < -90.0 || lat > 90.0 || lon < -180.0 || lon > 180.0) { return false; }
@@ -191,3 +193,5 @@ const char* hammy_compass_point(double bearingDeg) {
 
     return POINTS[idx];
 }
+
+#pragma clang diagnostic pop
