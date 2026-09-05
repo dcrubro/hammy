@@ -598,6 +598,11 @@ target_include_directories(hammy SYSTEM PRIVATE
 # warning set and no second copy under third_party/ is needed.
 
 target_link_libraries(hammy PRIVATE concord::concord SQLite::SQLite3)
+
+if (NOT MSVC)
+    target_link_libraries(hammy PRIVATE m)
+endif()
+
 if(HAMMY_CONCORD_EXTERNAL)
     add_dependencies(hammy ${HAMMY_CONCORD_EXTERNAL})
 endif()
