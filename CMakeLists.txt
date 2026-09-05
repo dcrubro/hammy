@@ -415,6 +415,8 @@ else()
         OUTPUT "${CONCORD_INSTALL_SCRIPT}"
         @ONLY
         CONTENT [[
+cmake_policy(SET CMP0057 NEW)
+
 file(MAKE_DIRECTORY "@CONCORD_INCLUDE_DIR@/concord" "@CONCORD_PREFIX@/lib")
 
 # Upstream flattens all three header directories into one include/concord. Check
